@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/list_selector"
+    android:orientation="horizontal"
+    android:padding="5dip" >
+
+    <!-- Title Of Song -->
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+
+        <ImageView
+            android:id="@+id/item_Image"
+            android:layout_width="88dp"
+            android:layout_height="68dp"
+            android:src="@drawable/list_rectangle" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Rihanna Love the way lie"
+                android:textColor="#040404"
+                android:textSize="15dip"
+                android:textStyle="bold"
+                android:typeface="sans" />
+
+            <TextView
+                android:id="@+id/desinger"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="37dp"
+                android:layout_weight="1"
+                android:descendantFocusability="blocksDescendants"
+                android:focusable="false"
+                android:text="Just gona stand there and ..."
+                android:textColor="#343434"
+                android:textSize="10dip" />
+
+            
+            <RatingBar
+               android:id="@+id/rtbProductRating"
+		      android:layout_height="wrap_content"
+		      android:layout_width="wrap_content"
+		      android:numStars="5"
+		      android:rating="3.5"
+		      android:isIndicator="false"
+		      style="@style/foodRatingBar">
+            </RatingBar>
+ 			
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Artist Name -->
+
+
+    <!-- Rightend Duration -->
+
+
+    <!-- Rightend Arrow -->
+
+</RelativeLayout>

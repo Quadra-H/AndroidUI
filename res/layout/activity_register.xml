@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+<RelativeLayout
+                android:id="@+id/relativeLayoutBusinessCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/imageViewSpecial"
+                android:layout_alignParentTop="true"
+                android:layout_margin="20dp"
+                android:background="@drawable/businesscard_bg"
+                android:padding="15dp" >
+
+                <ImageView
+                    android:id="@+id/imageViewProfile"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/arrow"
+                    android:layout_marginRight="15dp" />
+
+                <com.example.diymarket.profile.ScrollingTextView
+                    android:id="@+id/textViewTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_toRightOf="@+id/imageViewProfile"
+                    android:ellipsize="marquee"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:scrollHorizontally="true"
+                    android:singleLine="true"
+                    android:text="Title"
+                    android:onClick="functionTitle"
+                    android:clickable="true"
+                    android:textColor="#FFF"
+                    android:textSize="25dp"
+                    android:textStyle="bold" />
+
+                <com.example.diymarket.profile.ScrollingTextView
+                    android:id="@+id/textViewDesignerID"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignLeft="@+id/textViewTitle"
+                    android:layout_below="@+id/textViewTitle"
+                    android:ellipsize="marquee"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:scrollHorizontally="true"
+                    android:singleLine="true"
+                    android:text="DesignerID"
+                    android:textColor="#FFF" />
+
+                <com.example.diymarket.profile.ScrollingTextView
+                    android:id="@+id/textViewCost"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignLeft="@+id/textViewDesignerID"
+                    android:layout_below="@+id/textViewDesignerID"
+                    android:ellipsize="marquee"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:scrollHorizontally="true"
+                    android:singleLine="true"
+                    android:onClick="functionCost"
+                    android:text="Cost"
+                    android:textColor="#FFF" />
+
+                <Button
+                    android:id="@+id/btnRegister"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/imageViewProfile"
+                    android:layout_toRightOf="@+id/textViewDesignerID"
+                    android:text="등록하기"
+                    android:textSize="10dp" />
+
+            </RelativeLayout>
+            
+            <View style="@style/TurquoiseLine" />
+            
+	<LinearLayout
+      android:layout_width="match_parent" 
+      android:layout_height="match_parent"
+      android:orientation="vertical"> 
+
+      <android.support.v4.view.ViewPager
+        android:id="@+id/pager2"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"></android.support.v4.view.ViewPager>
+      
+      <com.example.diymarket.content.circle.CirclePageIndicator 
+           android:id="@+id/pagerIndicator1"
+        android:padding="10dip"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"></com.example.diymarket.content.circle.CirclePageIndicator>
+	</LinearLayout> 
+	
+</LinearLayout>

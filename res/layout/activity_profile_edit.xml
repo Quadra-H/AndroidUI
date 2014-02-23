@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="120" >
+    
+    
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="80"
+        android:orientation="horizontal" >
+
+        <ImageView
+            android:id="@+id/imageViewProfileEdit"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:orientation="vertical"
+			android:onClick="functionPicture"
+            android:clickable="true"
+            android:src="@drawable/arrow" />
+
+    </RelativeLayout>
+    
+    		<LinearLayout
+				style="@style/Layout.Settings"
+				android:layout_weight="40"
+				android:orientation="vertical">
+    		    
+    		<TextView
+				style="@style/TextView.SettingHeader"
+				android:textColor="@android:color/black"
+				android:text="@string/setting_header_grid" />
+
+			<View style="@style/GrayLine.Header" />   
+			
+			<LinearLayout
+				android:id="@+id/layoutDevelopers"
+				style="@style/Layout.SettingsItem"
+				android:orientation="vertical"				
+				android:onClick="functionName"
+				android:clickable="true">
+
+				<TextView				    
+				    android:id="@+id/EditDesignerName"				    
+					style="@style/TextView.SettingTitle"
+					android:text="@string/author" />
+			</LinearLayout>
+			
+			<View style="@style/GrayLine" />
+			
+			<LinearLayout
+				android:id="@+id/layoutDevelopersState"
+				style="@style/Layout.SettingsItem"
+				android:onClick="functionState"
+				android:clickable="true"
+				android:orientation="vertical">
+
+				<TextView
+				    android:id="@+id/EditDesignerState"
+					style="@style/TextView.SettingTitle"
+					android:text="@string/settings_the_code" />
+
+				
+
+			</LinearLayout>
+			
+			<View style="@style/GrayLine" />
+			
+			
+			<TextView
+				style="@style/TextView.SettingHeader"
+				android:layout_marginTop="24dp"
+				android:textColor="@android:color/black"
+				android:text="@string/setting_header_grid" />
+
+			<View style="@style/GrayLine.Header" />
+			
+			<LinearLayout
+				android:id="@+id/layoutDevelopers"
+				style="@style/Layout.SettingsItem"
+				android:orientation="vertical">
+
+				<TextView
+					style="@style/TextView.SettingTitle"
+					android:text="@string/author" />
+
+				
+
+			</LinearLayout>
+			
+			<View style="@style/GrayLine" />
+			
+			
+    		</LinearLayout>
+
+</LinearLayout>

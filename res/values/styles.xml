@@ -36,15 +36,15 @@
         <item name="footerIndicatorHeight">3dp</item>
         <item name="footerIndicatorStyle">underline</item>
         <item name="android:textColor">#AA000000</item>
-        <item name="selectedColor">#FF000000</item>
+        <item name="selectedColor">#FFFFFF</item>
         <item name="selectedBold">true</item>
     </style>
 
     <style name="CustomLinePageIndicator">
         <item name="strokeWidth">4dp</item>
         <item name="lineWidth">30dp</item>
-        <item name="unselectedColor">#FF888888</item>
-        <item name="selectedColor">#FF880000</item>
+        <item name="unselectedColor">#B0B2B6</item>
+        <item name="selectedColor">#FFFFFF</item>
     </style>
 
     <style name="CustomCirclePageIndicator">
@@ -58,7 +58,7 @@
     <style name="CustomTabPageIndicator" parent="Widget.TabPageIndicator">
         <item name="android:background">@drawable/custom_tab_indicator</item>
         <item name="android:textAppearance">@style/CustomTabPageIndicator.Text</item>
-        <item name="android:textColor">#FF555555</item>
+        <item name="android:textColor">#FFFFFF</item>
         <item name="android:textSize">16sp</item>
         <item name="android:divider">@drawable/custom_tab_indicator_divider</item>
         <item name="android:paddingLeft">8dp</item>
@@ -79,7 +79,7 @@
     </style>
     
     <!-- customizing star -->
-     <style name="foodRatingBar" parent="@android:style/Widget.RatingBar">
+    <style name="foodRatingBar" parent="@android:style/Widget.RatingBar">
         <item name="android:progressDrawable">@drawable/ratingstars</item>
         <item name="android:minHeight">22dip</item>
         <item name="android:maxHeight">22dip</item>
@@ -126,6 +126,20 @@
 		<item name="android:background">@color/turquoise</item>
 	</style>
 	
+   	<style name="itempackage">
+		<item name="android:layout_width">match_parent</item>
+		<item name="android:layout_height">1dp</item>
+		<item name="android:background">@color/itempackage</item>
+	</style>
+	
+   	<style name="profileLine">   	    
+		<item name="android:layout_width">match_parent</item>
+		<item name="android:layout_height">1dp</item>
+		<item name="android:background">@color/basicColor</item>
+	</style>
+	
+   	
+	
    	<!--  -->
    	
    	<style name="Layout.Settings">
@@ -167,6 +181,7 @@
 		<item name="android:textSize">14sp</item>
 	</style>
 	
+
 	
 
 </resources>

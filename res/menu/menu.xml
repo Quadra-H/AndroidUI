@@ -10,14 +10,10 @@
         android:id="@+id/action_profile_edit"
         android:orderInCategory="100"
         android:showAsAction="always"
-        android:icon="@drawable/arrow"
+        android:icon="@android:drawable/ic_menu_edit"
         android:title="@string/register"/>
-   <!-- 
-    <item
-        android:id="@+id/action_tag"
-        android:actionViewClass="android.widget.Spinner"
-        android:visible="true"
-        android:showAsAction="always"/>
+ 
         
-         -->
+        
 </menu>
+

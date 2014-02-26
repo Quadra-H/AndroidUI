@@ -1,14 +1,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-
     <item
         android:id="@+id/action_register"
         android:orderInCategory="100"
         android:showAsAction="always"
-        android:icon="@drawable/add_btn"/>
+        android:icon="@drawable/btn_add"/>
     <item
         android:id="@+id/action_tag"
         android:actionViewClass="android.widget.Spinner"
         android:visible="true"
         android:showAsAction="always"/>
-
 </menu>

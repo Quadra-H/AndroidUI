@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/white"
     android:weightSum="100" >
 
    
@@ -22,73 +23,77 @@
                 android:id="@+id/imageViewSpecial"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:src="@drawable/collage"
-                android:scaleType="centerCrop"/>
+                android:scaleType="centerCrop"
+                android:src="@drawable/collage" />
 
-            <RelativeLayout
-                android:id="@+id/relativeLayoutBusinessCard"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/imageViewSpecial"
+            <ImageView
+                android:id="@+id/imageViewProfilePicture"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:layout_alignParentTop="true"
-                android:layout_margin="20dp"
-                android:background="@drawable/businesscard_bg"
-                android:padding="15dp" >
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/profile_picture" />
 
-                <ImageView
-                    android:id="@+id/imageViewProfile"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/arrow"
-                    android:layout_marginRight="15dp" />
+            <com.ssm.quadrah.diymarket.profile.ScrollingTextView
+                android:id="@+id/textViewProfileName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/imageViewProfilePicture"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="14dp"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
+                android:text="Alexander Koma"
+                android:textColor="#000"
+                android:textSize="25dp"
+                android:textStyle="bold" />
 
-                <com.example.diymarket.profile.ScrollingTextView
-                    android:id="@+id/textViewName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_toRightOf="@+id/imageViewProfile"
-                    android:ellipsize="marquee"
-                    android:marqueeRepeatLimit="marquee_forever"
-                    android:scrollHorizontally="true"
-                    android:singleLine="true"
-                    android:text="Name"
-                    android:textColor="#FFF"
-                    android:textSize="25dp"
-                    android:textStyle="bold" />
-
-                <com.example.diymarket.profile.ScrollingTextView
-                    android:id="@+id/textViewLocation"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignLeft="@+id/textViewName"
-                    android:layout_below="@+id/textViewName"
-                    android:ellipsize="marquee"
-                    android:marqueeRepeatLimit="marquee_forever"
-                    android:scrollHorizontally="true"
-                    android:singleLine="true"
-                    android:text="Location"
-                    android:textColor="#FFF" />
-
-                <com.example.diymarket.profile.ScrollingTextView
-                    android:id="@+id/textViewTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignLeft="@+id/textViewLocation"
-                    android:layout_below="@+id/textViewLocation"
-                    android:ellipsize="marquee"
-                    android:marqueeRepeatLimit="marquee_forever"
-                    android:scrollHorizontally="true"
-                    android:singleLine="true"
-                    android:text="Title"
-                    android:textColor="#FFF" />
-            </RelativeLayout>
+            <com.ssm.quadrah.diymarket.profile.ScrollingTextView
+                android:id="@+id/textViewState"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textViewProfileName"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="5dp"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
+                android:text="Today was awesome and beautiful!"
+                android:textColor="#000" />
         </RelativeLayout>
 
     </RelativeLayout>
 
-    <View style="@style/TurquoiseLine" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <Button
+            android:id="@+id/btnWorkAdd"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
+            android:clickable="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/profile_btn_add" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/button1"
+            android:layout_alignBottom="@+id/button1"
+            android:layout_alignParentLeft="true"
+            android:layout_margin="10dp"
+            android:layout_marginLeft="14dp"
+            android:text="Works"
+            android:textColor="#F34022" />
+    </RelativeLayout>
+
+    <View style="@style/profileLine" />
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -16,7 +16,7 @@
         android:text="Layout" />
 
     <Button
-        android:id="@+id/button1"
+        android:id="@+id/btnTest1"
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:layout_alignLeft="@+id/btnLayout"
@@ -52,7 +52,7 @@
         android:id="@+id/btnMy"
         android:layout_width="120dp"
         android:layout_height="120dp"        
-        android:layout_alignLeft="@+id/button1"
+        android:layout_alignLeft="@+id/btnTest1"
         android:layout_alignTop="@+id/btnBackground"
         android:text="My" />
     

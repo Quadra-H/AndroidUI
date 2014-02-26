@@ -5,9 +5,12 @@
     <color name="dark_transparent">#8F000000</color>
     <color name="coderwall_blue">#3E8DCC</color>
     <color name="turquoise">#33B5E5</color>
+    <color name="itempackage">#AFAFAF</color>
     <color name="gray_line">#343639</color>
     <color name="background">#111111</color>
-    <color name="gray">#999999</color>
+    <color name="black">#000000</color>
+    <color name="gray">#DBDEE3</color>
    	<color name="white">#ffffff</color>
     <color name="settings_header">#bebebe</color>
+    <color name="basicColor">#f34022</color>
 </resources>

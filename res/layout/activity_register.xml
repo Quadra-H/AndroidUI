@@ -21,7 +21,7 @@
                     android:src="@drawable/arrow"
                     android:layout_marginRight="15dp" />
 
-                <com.example.diymarket.profile.ScrollingTextView
+                <com.ssm.quadrah.diymarket.profile.ScrollingTextView
                     android:id="@+id/textViewTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -38,7 +38,7 @@
                     android:textSize="25dp"
                     android:textStyle="bold" />
 
-                <com.example.diymarket.profile.ScrollingTextView
+                <com.ssm.quadrah.diymarket.profile.ScrollingTextView
                     android:id="@+id/textViewDesignerID"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -51,7 +51,7 @@
                     android:text="DesignerID"
                     android:textColor="#FFF" />
 
-                <com.example.diymarket.profile.ScrollingTextView
+                <com.ssm.quadrah.diymarket.profile.ScrollingTextView
                     android:id="@+id/textViewCost"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -89,11 +89,11 @@
         android:layout_height="0dp"
         android:layout_weight="1"></android.support.v4.view.ViewPager>
       
-      <com.example.diymarket.content.circle.CirclePageIndicator 
+      <com.ssm.quadrah.diymarket.content.circle.CirclePageIndicator 
            android:id="@+id/pagerIndicator1"
         android:padding="10dip"
         android:layout_height="wrap_content"
-        android:layout_width="fill_parent"></com.example.diymarket.content.circle.CirclePageIndicator>
+        android:layout_width="fill_parent"></com.ssm.quadrah.diymarket.content.circle.CirclePageIndicator>
 	</LinearLayout> 
 	
 </LinearLayout>

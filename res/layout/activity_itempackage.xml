@@ -6,94 +6,148 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="234dp"
+        android:layout_height="170dp"
         android:orientation="vertical" >
 
         <Button
-            android:id="@+id/btnExit"     
-            android:layout_marginTop="170dp"       
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/btnExit"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_gravity="center_horizontal"            
+            android:layout_marginTop="130dp"
+            android:background="@drawable/popup_x" />
+        
+        <View 
+            android:layout_height="5dp"
+            android:layout_width="0dp"
+            ></View>         
+
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:layout_gravity="center_horizontal"
-            android:text="Button" />
+            android:src="@drawable/popup_triangle" />
         
     </LinearLayout>
         
     <LinearLayout
         android:layout_width="match_parent"
-        android:background="#3E80B4"
-        android:layout_height="83dp" >
-
-        <ImageView
-            android:id="@+id/imageView1"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:src="@drawable/arrow" />
+        android:layout_height="140dp"
+        android:background="@drawable/popup_white_bg" >
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/TextView01"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"      
+                android:layout_marginLeft="10dp"          
+                android:text="Image title 01"
+                android:textColor="@android:color/black"
+                android:textSize="15dp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/txt_dia"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:text="Do you realy want to exit ?"
-                android:textColor="@android:color/white"
+                android:layout_marginLeft="10dp"  
+                android:text="Designer"
+                android:textColor="@android:color/black"
                 android:textSize="15dp"
                 android:textStyle="bold" />
-
-            <LinearLayout
+            
+            <RatingBar
+              android:id="@+id/rtbProductRating"
+		      android:layout_height="wrap_content"
+		      android:layout_width="wrap_content"
+		      android:layout_marginLeft="10dp"
+		      android:numStars="5"
+		      android:rating="3.5"
+		      android:isIndicator="false"
+		      style="@style/foodRatingBar">
+            </RatingBar>
+            
+             <TextView
+                android:id="@+id/txt_dia"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="#3E80B4"                              
+                android:layout_marginLeft="10dp"  
+                android:text="Free"
+                android:textColor="@android:color/black"
+                android:textSize="15dp"
+                android:layout_marginBottom="5dp"
+                android:textStyle="bold" />
+            
+
+            <View 
+                android:layout_marginBottom="5dp"
+                style="@style/itempackage" />
+            
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"   
+                android:weightSum="100"             
                 android:orientation="horizontal" >
 
                 <Button
-                    android:id="@+id/btn_yes"
-                    android:layout_width="100dp"
+                    android:id="@+id/btnLike"
+                    android:layout_weight="50"
+                    android:layout_width="170dp"
                     android:layout_height="30dp"
-                    android:background="@android:color/white"
+                    android:background="@drawable/popup_btn_like"
+                    android:layout_marginLeft="5dp"    
+                    android:layout_marginBottom="5dp"                
                     android:clickable="true"
-                    android:text="Yes"
-                    android:textColor="#5DBCD2"
                     android:textStyle="bold" />
 
                 <Button
-                    android:id="@+id/btn_no"
-                    android:layout_width="100dp"
+                    android:id="@+id/btnBuy"                    
+                    android:layout_width="170dp"
+                    android:layout_weight="50"
                     android:layout_height="30dp"
-                    android:layout_marginLeft="5dp"
-                    android:background="@android:color/white"
+                    android:layout_marginLeft="10dp"                    
+                    android:layout_marginRight="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:background="@drawable/popup_btn_buy"
                     android:clickable="true"
-                    android:text="No"
-                    android:textColor="#5DBCD2"
                     android:textStyle="bold" />
             </LinearLayout>
+
         </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-                      android:background="#3E80B4"
+        android:layout_height="fill_parent"      
+        android:background="#3E80B4"
+        android:weightSum="1"
+        android:scrollbars="none"
         android:orientation="vertical" >
 
         <android.support.v4.view.ViewPager
-            android:id="@+id/pager1"
+            android:id="@+id/pager1"            
             android:layout_width="fill_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1" >
+            android:layout_height="159dp"
+            android:scrollbars="none"
+            android:layout_weight="0.96"
+            android:background="@drawable/popup_gray_bg" >
+
         </android.support.v4.view.ViewPager>
 
-        <com.example.diymarket.content.circle.CirclePageIndicator
+        <com.ssm.quadrah.diymarket.content.circle.CirclePageIndicator
             android:id="@+id/pagerIndicator"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="0.1"
+            android:background="@color/gray"
             android:padding="10dip" />
+
     </LinearLayout>
 
 </LinearLayout>

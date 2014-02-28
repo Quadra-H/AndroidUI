@@ -120,27 +120,24 @@ public class MainActivity extends Activity {
 
 				HttpClient httpclient = new DefaultHttpClient();
 				HttpConnectionParams.setConnectionTimeout(httpclient.getParams(), 10000); //Timeout Limit
-				HttpGet httpGet = new HttpGet("http://10.0.2.2:8888/media/uploadUrl");				
-				HttpResponse response = httpclient.execute(httpGet);								
-
+				HttpGet httpGet = new HttpGet(Constants.SERVER_URL+"/media/uploadUrl");				
+				HttpResponse response = httpclient.execute(httpGet);
 
 				responseStr = EntityUtils.toString(response.getEntity());
 				Log.i("", "responseStr 1: " + responseStr);
 
 				JSONObject resultJson = new JSONObject(responseStr);
-
 				String uploadURL = resultJson.getString("uploadURL");
 
 				httpclient = new DefaultHttpClient();
-				HttpPost httppost = new HttpPost(uploadURL.replaceAll("localhost","10.0.2.2"));				
-
-
-
+				HttpPost httppost = new HttpPost(uploadURL.replaceAll("localhost","10.0.2.2"));
+				
 
 				Bitmap bitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(),
 						R.drawable.add_btn);				
 
-				Log.i("", "File name : " + getFilesDir()+"test4.png");				
+				Log.i("", "File name : " + getFilesDir()+""
+						+ ".png");				
 				File file = new File(getFilesDir()+"test4.png");
 				OutputStream out = null;
 

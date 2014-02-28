@@ -131,7 +131,7 @@ public class MarketRegister extends FragmentActivity {
 				responseStr = EntityUtils.toString(response.getEntity());
 				Log.i("", "responseStr 1: " + responseStr);
 				
-				/*JSONObject resultJson = new JSONObject(responseStr);
+				JSONObject resultJson = new JSONObject(responseStr);
 
 				String uploadURL = resultJson.getString("uploadURL");
 				
@@ -191,7 +191,7 @@ public class MarketRegister extends FragmentActivity {
 //				Log.i("", "blobKey: " + blobKey + " servingUrl: "+servingUrl );
 				
 				
-				*/
+				/**/
 				
 				/*
 				httpclient = new DefaultHttpClient();

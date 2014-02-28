@@ -1,13 +1,13 @@
 {
   "files": [
     {
-      "downloadUrl": "/downloads/deviceinfoendpoint/v1/20140226061738/java/1.16.0-rc/ssm.com-deviceinfoendpoint-v1-20140226061738-java-1.16.0-rc-sources.jar", 
-      "path": "ssm.com-deviceinfoendpoint-v1-20140226061738-java-1.16.0-rc-sources.jar", 
+      "downloadUrl": "/downloads/deviceinfoendpoint/v1/20140227192237/java/1.16.0-rc/ssm.com-deviceinfoendpoint-v1-20140227192237-java-1.16.0-rc-sources.jar", 
+      "path": "ssm.com-deviceinfoendpoint-v1-20140227192237-java-1.16.0-rc-sources.jar", 
       "type": "source", 
-      "timestamp": "2014-02-26 06:17"
+      "timestamp": "2014-02-27 19:22"
     }, 
     {
-      "path": "ssm.com-deviceinfoendpoint-v1-20140226061738-java-1.16.0-rc.jar.properties", 
+      "path": "ssm.com-deviceinfoendpoint-v1-20140227192237-java-1.16.0-rc.jar.properties", 
       "type": "android.properties"
     }
   ], 
@@ -702,5 +702,5 @@
   "packagePath": "quadrah.diymarket", 
   "language_version": "1.16.0-rc", 
   "id": "deviceinfoendpoint:v1", 
-  "revision": 20140226061738
+  "revision": 20140227192237
 }

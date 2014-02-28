@@ -42,6 +42,10 @@ public class DetailItems extends EndlessAdapter {
 		this.listItems = listItems;
 	}
 	
+	public void setListItems(ArrayList<Items> listItems){
+		this.listItems= listItems;
+	}
+	
 	@Override
 	public int getCount() {
 		// TODO Auto-generated method stub

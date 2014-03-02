@@ -48,6 +48,10 @@ public class DetailItems extends EndlessAdapter {
 		this.listItems = listItems;
 	}
 	
+	public void setListItems(ArrayList<Items> listItems){
+		this.listItems= listItems;
+	}
+	
 	@Override
 	  protected View getPendingView(ViewGroup parent) {
 	    View row=LayoutInflater.from(parent.getContext()).inflate(R.layout.listview_row, null);

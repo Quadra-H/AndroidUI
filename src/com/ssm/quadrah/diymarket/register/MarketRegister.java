@@ -101,7 +101,221 @@ public class MarketRegister extends FragmentActivity {
 	}	
 	
 
-	
+
+	/**
+	 * AsyncTask for calling Mobile Assistant API for checking into a 
+	 * place (e.g., a store).
+	 */
+	private class GetUploadURLTask extends AsyncTask<String, String, String> {
+
+		/**
+		 * Calls appropriate CloudEndpoint to indicate that user checked into a place.
+		 *
+		 * @param params the place where the user is checking in.
+		 */
+		@Override
+		protected String doInBackground(String... params) {
+
+			String responseStr = null;
+			
+			try {
+
+				HttpClient httpclient = new DefaultHttpClient();
+				HttpConnectionParams.setConnectionTimeout(httpclient.getParams(), 10000); //Timeout Limit
+				HttpGet httpGet = new HttpGet("http://10.0.2.2:8888/media/mediaList");				
+				HttpResponse response = httpclient.execute(httpGet);								
+
+
+				responseStr = EntityUtils.toString(response.getEntity());
+				Log.i("", "responseStr 1: " + responseStr);
+				
+				JSONObject resultJson = new JSONObject(responseStr);
+
+				String uploadURL = resultJson.getString("uploadURL");
+				
+				httpclient = new DefaultHttpClient();
+				HttpPost httppost = new HttpPost(uploadURL);				
+				
+				
+				Bitmap bitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(),
+                        R.drawable.add_btn);				
+				
+				Log.i("", "File name : " + getFilesDir()+"test4.png");				
+				File file = new File(getFilesDir()+"test4.png");
+		        OutputStream out = null;
+		 
+		        try
+		        {
+		        	file.createNewFile();
+		            out = new FileOutputStream(file);
+		 
+		            bitmap.compress(CompressFormat.JPEG, 100, out);
+		        }
+		        catch (Exception e) 
+		        {
+		            e.printStackTrace();
+		        }
+		        finally
+		        {
+		            try
+		            {
+		                out.close();
+		            }
+		            catch (IOException e)
+		            {
+		                e.printStackTrace();
+		            }
+		        }
+				
+				
+
+				FileBody fileBody  = new FileBody(file);
+				MultipartEntity reqEntity = new MultipartEntity();
+
+				reqEntity.addPart("file", fileBody);
+
+				httppost.setEntity(reqEntity);
+				response = httpclient.execute(httppost);
+				responseStr = EntityUtils.toString(response.getEntity());
+				
+				Log.i("", "responseStr 2: " + responseStr );
+				
+				
+//				resultJson = new JSONObject(responseStr);
+//
+//				String blobKey = resultJson.getString("title");
+//				String servingUrl = resultJson.getString("description");
+//
+//				Log.i("", "blobKey: " + blobKey + " servingUrl: "+servingUrl );
+				
+				
+				/**/
+				
+				/*
+				httpclient = new DefaultHttpClient();
+				HttpPost httppost = new HttpPost(responseStr);
+
+				//Drawable drawable= getResources().getDrawable(R.drawable.ratingstars);
+				//drawable.
+
+				String path = Environment.getExternalStorageDirectory().toString();
+				//File file = new File(path, "normal_star.png");
+				
+				
+				Bitmap bitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(),
+                        R.drawable.add_btn);
+				//Uri saveFile = FileUtil.getTemporaryFileName();
+				
+				
+				Log.i("", "File name : " + getFilesDir()+"test2.png");				
+				File file = new File(getFilesDir()+"test2.png");
+		        OutputStream out = null;
+		 
+		        try
+		        {
+		        	file.createNewFile();
+		            out = new FileOutputStream(file);
+		 
+		            bitmap.compress(CompressFormat.JPEG, 100, out);
+		        }
+		        catch (Exception e) 
+		        {
+		            e.printStackTrace();
+		        }
+		        finally
+		        {
+		            try
+		            {
+		                out.close();
+		            }
+		            catch (IOException e)
+		            {
+		                e.printStackTrace();
+		            }
+		        }
+				
+				
+
+				FileBody fileBody  = new FileBody(file);
+				MultipartEntity reqEntity = new MultipartEntity();
+
+				reqEntity.addPart("file", fileBody);
+
+				httppost.setEntity(reqEntity);
+				response = httpclient.execute(httppost);
+				responseStr = EntityUtils.toString(response.getEntity());
+				
+				Log.i("", "responseStr 2: " + responseStr );
+				
+				
+				JSONObject resultJson = new JSONObject(responseStr);
+
+				String blobKey = resultJson.getString("blobKey");
+				String servingUrl = resultJson.getString("servingUrl");
+
+				Log.i("", "blobKey: " + blobKey + " servingUrl: "+servingUrl );
+				
+				
+				*/
+				
+				
+
+			} catch (IOException e) {				
+				Log.i("", "IOException e: " + e.getMessage());
+				e.printStackTrace();
+			} catch (Exception e) {				
+				Log.i("", "Exception e: " + e.getMessage());
+				e.printStackTrace();
+			}
+
+			return responseStr;
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			Log.i("", "GetUploadURLTask: onPostExecute : " + result);
+			
+			String responseStr=null;
+
+
+
+			try{
+				
+				
+				/*
+				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+
+				nameValuePairs.add(new BasicNameValuePair("userId", userId));
+				nameValuePairs.add(new BasicNameValuePair("blobKey",blobKey));
+				nameValuePairs.add(new BasicNameValuePair("servingUrl",servingUrl));
+
+				HttpClient httpclient = new DefaultHttpClient();
+				HttpConnectionParams.setConnectionTimeout(httpclient.getParams(), 10000);
+
+				HttpPost httppost = new HttpPost(url);
+				httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+				HttpResponse response = httpclient.execute(httppost);
+				*/
+
+
+			}catch(Exception e){
+
+				Log.i("", "Exception e: " + e.getMessage());
+				e.printStackTrace();				
+			}
+
+
+
+			super.onPostExecute(result);			
+
+		}
+
+
+	}
+
+
+
+
 	View.OnClickListener OnClickBtnRegister = new View.OnClickListener() {
 		
 		@Override

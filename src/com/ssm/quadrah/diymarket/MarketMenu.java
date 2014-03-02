@@ -1,9 +1,13 @@
 package com.ssm.quadrah.diymarket;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.TypedValue;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
@@ -29,6 +33,30 @@ public class MarketMenu extends Activity {
 	    Button btnBackground = (Button)findViewById(R.id.btnBackground);
 	    btnBackground.setTextSize(TypedValue.COMPLEX_UNIT_PX, 40);
 	    btnBackground.setOnClickListener(OnClickBtnBackground);
+	    
+	    ActionBar bar = getActionBar();
+	    bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#f34022")));
+	    bar.setHomeButtonEnabled(true);
+	    bar.setDisplayShowHomeEnabled(false);
+	    
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+		
+		switch(item.getItemId()){
+					
+		case android.R.id.home:
+			finish();
+			overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
+			break;
+	
+		default:
+		}
+		
+	
+		return super.onOptionsItemSelected(item);
 	}
 	
 	View.OnClickListener OnClickBtnBackground = new View.OnClickListener() {

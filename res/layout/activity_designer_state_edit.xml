@@ -11,16 +11,30 @@
         android:layout_alignParentTop="true"
         android:layout_marginLeft="37dp"
         android:layout_marginTop="28dp"
-        android:text="@string/edit_state" />
-
+        android:text="상태 메시지" />
+    
     <EditText
         android:id="@+id/editTextState"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="37dp"
+        android:layout_height="30dp"
         android:layout_below="@+id/EditDesignerState"
+        android:layout_marginLeft="37dp"        
         android:layout_marginTop="18dp"
+        android:background="@drawable/rounded_edittext"
         android:ems="10"
-        android:inputType="textPersonName" />
+        android:hint="상태 메시지를 입력하세요."
+        android:inputType="textPersonName"
+        android:paddingLeft="10dp" >
+        
+    </EditText>
+
+    <TextView
+        android:id="@+id/countText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/editTextState"
+        android:layout_below="@+id/editTextState"
+        android:layout_marginTop="14dp"
+         />
     
 </RelativeLayout>

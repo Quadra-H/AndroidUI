@@ -8,11 +8,19 @@
     
 
     <RelativeLayout
+        android:id="@+id/relativeCover"
         android:layout_width="match_parent"
-        android:layout_height="0dip"
-        android:layout_gravity="center_vertical"
-        android:layout_weight="80"
+        android:layout_height="200dp"
+        android:layout_gravity="center_vertical"        
+        android:onClick="functionName"
         android:orientation="horizontal" >
+        
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:adjustViewBounds="true"
+            android:id="@+id/imageViewCover">            
+        </ImageView>
 
         <ImageView
             android:id="@+id/imageViewProfileEdit"
@@ -49,7 +57,7 @@
 				<TextView				    
 				    android:id="@+id/EditDesignerName"				    
 					style="@style/TextView.SettingTitle"
-					android:text="@string/author" />
+					android:text="이름" />
 			</LinearLayout>
 			
 			<View style="@style/GrayLine" />
@@ -64,7 +72,7 @@
 				<TextView
 				    android:id="@+id/EditDesignerState"
 					style="@style/TextView.SettingTitle"
-					android:text="@string/settings_the_code" />
+					android:text="상태말" />
 
 				
 
@@ -77,18 +85,42 @@
 				style="@style/TextView.SettingHeader"
 				android:layout_marginTop="24dp"
 				android:textColor="@android:color/black"
-				android:text="@string/setting_header_grid" />
+				android:text="@string/setting_header_grid2" />
 
 			<View style="@style/GrayLine.Header" />
 			
+			
+			
+			
 			<LinearLayout
-				android:id="@+id/layoutDevelopers"
+				android:id="@+id/layoutDesignerProfile"
+				style="@style/Layout.SettingsItem"
+				android:onClick="functionPicture"
+				android:clickable="true"
+				android:orientation="vertical">
+
+				<TextView
+				    android:id="@+id/EditDesignerProfile"
+					style="@style/TextView.SettingTitle"
+					android:text="프로필 사진" />
+
+				
+
+			</LinearLayout>
+			
+			<View style="@style/GrayLine" />
+			
+			<LinearLayout
+				android:id="@+id/layoutCoverPicture"
+				android:onClick="functionCoverPicture"
+				android:clickable="true"				
 				style="@style/Layout.SettingsItem"
 				android:orientation="vertical">
 
 				<TextView
 					style="@style/TextView.SettingTitle"
-					android:text="@string/author" />
+					android:id="@+id/textCoverPicture"
+					android:text="커버사진" />
 
 				
 

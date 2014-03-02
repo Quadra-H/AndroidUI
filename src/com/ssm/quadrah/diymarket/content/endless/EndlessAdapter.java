@@ -55,11 +55,11 @@ abstract public class EndlessAdapter extends AdapterWrapper {
   abstract protected void appendCachedData();
 
   private View pendingView=null;
-  private AtomicBoolean keepOnAppending=new AtomicBoolean(true);
+  protected AtomicBoolean keepOnAppending=new AtomicBoolean(true);
   private Context context;
   private int pendingResource=-1;
   private boolean isSerialized=false;
-  private boolean runInBackground=true;
+  protected boolean runInBackground=true;
 
   /**
    * Constructor wrapping a supplied ListAdapter
@@ -285,7 +285,7 @@ abstract public class EndlessAdapter extends AdapterWrapper {
   }
 
   @TargetApi(11)
-  private <T> void executeAsyncTask(AsyncTask<T, ?, ?> task,
+protected <T> void executeAsyncTask(AsyncTask<T, ?, ?> task,
                                     T... params) {
     if (!isSerialized
         && (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)) {
@@ -296,7 +296,7 @@ abstract public class EndlessAdapter extends AdapterWrapper {
     }
   }
   
-  private void setKeepOnAppending(boolean newValue) {
+  protected void setKeepOnAppending(boolean newValue) {
     boolean same=(newValue==keepOnAppending.get());
     
     keepOnAppending.set(newValue);

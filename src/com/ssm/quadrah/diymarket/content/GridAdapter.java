@@ -91,7 +91,7 @@ public class GridAdapter extends BaseAdapter {
 			viewHolder = new ViewHolder();
 			viewHolder.imageView = (ImageView) view
 					.findViewById(R.id.grid_item_image);
-			//viewHolder.textTitle = (TextView) view.findViewById(R.id.grid_item_label);
+			
 			view.setTag(viewHolder);
 		} else {
 			viewHolder = (ViewHolder) view.getTag();

@@ -1,9 +1,11 @@
 package com.ssm.quadrah.diymarket.register;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,28 +23,23 @@ public class NewGridAdapter extends BaseAdapter{
 	private ArrayList<NewGridItems> newGridItems;
 	private ArrayList<ImageView> images;
 	
-	private ArrayList<Integer> btnNum;
-	private List<Button> buttons;
+	
+	
 	private LayoutInflater mInflater;
 	
-	ViewHolder viewHolder = null;
+	public ViewHolder viewHolder = null;
 	
 	
-	private int numButton;
 	
-	private LinearLayout dynamicLayout;
+
 	public NewGridAdapter(Context context, ArrayList<NewGridItems> newGridItems, ArrayList<ImageView> images)
 	{
+		this.context = context;
+		
 		mInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		
-		this.context = context;
 		this.newGridItems = newGridItems;
 		this.images = images;
-		
-		numButton = 0;
-		
-		buttons = new ArrayList<Button>();
-		btnNum = new ArrayList<Integer>();
 	}
 
 
@@ -57,7 +54,6 @@ public class NewGridAdapter extends BaseAdapter{
 
 	@Override
 	 public void notifyDataSetChanged() {
-		
 	  super.notifyDataSetChanged();
 	 }
 	
@@ -93,64 +89,57 @@ public class NewGridAdapter extends BaseAdapter{
 		if(view == null){
 			
 			view = mInflater.inflate(R.layout.grid_new_custom, parent, false);
-			viewHolder = new ViewHolder();
-			
+			viewHolder = new ViewHolder();	
 			viewHolder.imageView = (ImageView) view.findViewById(R.id.grid_new_item_image);
+			viewHolder.btnX = (Button)view.findViewById(R.id.btnX);
 			
-			dynamicLayout = (LinearLayout) view.findViewById(R.id.dynamicArea);
-			dynamicLayout.setFocusable(false);
-			
-			Button dynamicButton = new Button(context);
-			dynamicButton.setFocusable(false);
-			
-			
-			
-			dynamicButton.setId(numButton);
-			btnNum.add(numButton);
-			dynamicButton.setTag(numButton);
-			dynamicButton.setOnClickListener(OnClickListener);
-			
-			dynamicLayout.addView(dynamicButton, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
-			
-			
-			numButton++;
-			
+			viewHolder.btnX.setVisibility(View.GONE);
+			viewHolder.btnX.setOnClickListener(OnClickRemove);
 			view.setTag(viewHolder);
+			
+			
 		}else{
 			viewHolder = (ViewHolder)view.getTag();
+			viewHolder.btnX.setVisibility(View.VISIBLE);
 		}
 		
+			
 		setCatImage(position, viewHolder);
 		
 		return view;
 	}
 	
-	
-	View.OnClickListener OnClickListener = new View.OnClickListener() {
+	View.OnClickListener OnClickRemove = new View.OnClickListener() {
 		
 		@Override
 		public void onClick(View v) {
 			// TODO Auto-generated method stub
-			//Button removeBtn = (Button)v.findViewById(DYNAMIC_BTN_ID+viewHolder.numButton);
-			
-			String str = v.getTag().toString();
-			int strint = Integer.parseInt(str);
-			
-			for(int i = 0 ; i < btnNum.size(); i++){
+			NewGridItems removeItem = (NewGridItems)v.getTag();			
+			Log.d("removeItem", "remove : " + removeItem.id );
+			for(Iterator<NewGridItems> it = newGridItems.iterator(); it.hasNext();)
+			{
+				NewGridItems removeWork = it.next();
 				
-				if(btnNum.get(i) == strint){
+				
+				if(removeWork.id == removeItem.id)
+				{
+					it.remove();
 					
-					images.remove(i);
-					newGridItems.remove(i);
-					//numButton--; 
-					notifyDataSetChanged();
+					Log.d("removeWork", " " + removeWork.id);	
 				}
-			}
+			}						
+			
+			notifyDataSetChanged();
 		}
 	};
 	
+	
 
 	public void setCatImage(int pos, ViewHolder viewHolder) {		
+		
 		viewHolder.imageView.setImageDrawable(images.get(pos).getDrawable());
+		viewHolder.btnX.setTag(newGridItems.get(pos));
+		
+		
 	}
 }

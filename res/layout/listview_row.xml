@@ -1,72 +1,95 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/list_selector"
-    android:orientation="horizontal"
-    android:padding="5dip" >
+<?xml version="1.0" encoding="UTF-8"?>
 
-    <!-- Title Of Song -->
+<RelativeLayout android:padding="5dip" android:orientation="horizontal" android:background="@drawable/list_selector" android:layout_height="wrap_content" android:layout_width="fill_parent" xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <LinearLayout
-        android:id="@+id/linearLayout1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
-
-        <ImageView
-            android:id="@+id/item_Image"
-            android:layout_width="88dp"
-            android:layout_height="68dp"
-            android:src="@drawable/list_rectangle" />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="vertical" >
-
-            <TextView
-                android:id="@+id/title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Rihanna Love the way lie"
-                android:textColor="#040404"
-                android:textSize="15dip"
-                android:textStyle="bold"
-                android:typeface="sans" />
-
-            <TextView
-                android:id="@+id/desinger"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="37dp"
-                android:layout_weight="1"
-                android:descendantFocusability="blocksDescendants"
-                android:focusable="false"
-                android:text="Just gona stand there and ..."
-                android:textColor="#343434"
-                android:textSize="10dip" />
-
-            
-            <RatingBar
-               android:id="@+id/rtbProductRating"
-		      android:layout_height="wrap_content"
-		      android:layout_width="wrap_content"
-		      android:numStars="5"
-		      android:rating="3.5"
-		      android:isIndicator="false"
-		      style="@style/foodRatingBar">
-            </RatingBar>
- 			
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <!-- Artist Name -->
+<!-- Title Of Song -->
 
 
-    <!-- Rightend Duration -->
+
+<LinearLayout 
+    android:layout_height="wrap_content" 
+    android:layout_width="wrap_content"
+     android:id="@+id/linearLayout2">
+     
+       <ImageView 
+        android:id="@+id/throbber"
+    	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+    	android:src="@drawable/ic_popup_sync_1"
+    	android:visibility="gone"
+  		/>
+	<LinearLayout 
+    	android:layout_height="wrap_content" 
+    	android:layout_width="wrap_content"
+        android:id="@+id/linearLayout1">
+     
+	<ImageView 
+	    android:layout_height="68dp" 
+	    android:layout_width="88dp" 
+	    android:id="@+id/item_Image" 
+	    android:src="@drawable/list_rectangle" 
+	    android:layout_margin="10dp"/>
 
 
-    <!-- Rightend Arrow -->
+		<LinearLayout 
+		android:orientation="vertical" 
+		android:layout_height="match_parent" 
+		android:layout_width="wrap_content">
+
+		<TextView 
+		    android:layout_height="wrap_content" 
+		    android:layout_width="wrap_content" 
+		    android:id="@+id/title"
+		    android:typeface="sans" 
+		    android:textStyle="bold" 
+		    android:textSize="15dip" 
+		    android:textColor="#040404" 
+		    android:text="Image title 01"
+		    android:layout_marginTop="10dp"/>
+		
+		<TextView 
+		    android:layout_height="wrap_content" 
+		    android:layout_width="wrap_content" 
+		    android:id="@+id/desinger" 
+		    android:textSize="10dip" 
+		    android:textColor="#343434" 
+		    android:text="DesignerID" 
+		    android:focusable="false" 
+		    android:descendantFocusability="blocksDescendants"/>
+		
+		<RatingBar 
+		    android:layout_height="wrap_content" 
+		    android:layout_width="wrap_content" 
+		    android:id="@+id/rtbProductRating" 
+		    style="@style/foodRatingBar" 
+		    android:focusable="false"
+		    android:clickable="false"
+			android:focusableInTouchMode="false"
+		    android:isIndicator="true"
+		    android:rating="3.5" 
+		    android:numStars="5" > </RatingBar>
+		
+		<TextView 
+		    android:layout_height="wrap_content" 
+		    android:layout_width="wrap_content" 
+		    android:id="@+id/desinger" 
+		    android:textSize="10dip" 
+		    android:textColor="#343434" 
+		    android:text="Free" 
+		    android:focusable="false" 
+		    android:descendantFocusability="blocksDescendants"/>
+
+	</LinearLayout>
+</LinearLayout>
+</LinearLayout>
+
+<!-- Artist Name -->
+
+
+<!-- Rightend Duration -->
+
+
+<!-- Rightend Arrow -->
+
 
 </RelativeLayout>

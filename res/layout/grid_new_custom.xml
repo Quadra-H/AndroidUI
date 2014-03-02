@@ -1,23 +1,25 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="5dp" >
+<?xml version="1.0" encoding="UTF-8"?>
 
-    <LinearLayout
-        android:id="@+id/dynamicArea"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.47"
-        android:orientation="vertical" >
-    </LinearLayout>
+<RelativeLayout android:padding="5dp" android:orientation="vertical" android:layout_height="wrap_content" android:layout_width="wrap_content" xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <ImageView
-        android:id="@+id/grid_new_item_image"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginRight="10dp"
-        android:src="@drawable/arrow" />
+<Button 
+    android:layout_height="20dp" 
+    android:layout_width="20dp" 
+    android:layout_marginLeft="46dp" 
+    android:background="@drawable/popup_x"
+	android:focusable="false"	
+	android:clickable="true"	
+	android:layout_alignParentTop="true"
+	android:layout_alignParentLeft="true"
+	android:id="@+id/btnX"/>
 
-</LinearLayout>
+<ImageView 
+    android:layout_height="50dp" 
+    android:layout_width="50dp" 
+    android:id="@+id/grid_new_item_image" 
+    android:src="@drawable/arrow" 
+    android:focusable="false"
+    android:layout_centerHorizontal="true" 
+    android:layout_below="@+id/btnX"/>
+
+</RelativeLayout>

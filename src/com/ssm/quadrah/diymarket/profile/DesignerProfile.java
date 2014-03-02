@@ -30,7 +30,7 @@ public class DesignerProfile extends ListActivity {
 	private TextView tvState;
 	private Button btnWorkAdd;
 	
-	DetailItems detailItem_adapter = null;
+	DetailItems adapter;
 	
 	/** Called when the activity is first created. */
 	@Override
@@ -52,17 +52,21 @@ public class DesignerProfile extends ListActivity {
 	    
 	    //ivProfile.setImageResource(R.drawable.item1);
 	    
-	    DetailItems adapter=(DetailItems)getLastNonConfigurationInstance();
+	    //DetailItems adapter=(DetailItems)getLastNonConfigurationInstance();
+	    adapter=(DetailItems)getLastNonConfigurationInstance();
 	    
-	    if (adapter==null) {	     
+	    
+	    if (adapter==null)  {	     
 	      ArrayList<Items> listItems = new ArrayList<Items>();  
 	      
 	      for (int i=0;i<25;i++) {
+	    	  //listItems.add(i);
 	    	  Items item = new Items("Image title 01","DesignerID","Free");
-	    	  listItems.add(item); 
+	    	  listItems.add(item); 	    	  
 	      }
 	      
-	      adapter=new DetailItems(this, R.layout.listview_row,listItems);
+	      //adapter=new DetailItems(this, listItems);
+	      adapter=new DetailItems(this, listItems);
 	    }
 	    else {
 	      adapter.startProgressAnimation();
@@ -81,6 +85,12 @@ public class DesignerProfile extends ListActivity {
 			}
 		}
 	};
+	
+	@Override
+	  public Object getLastNonConfigurationInstance() {
+	    return(getListAdapter());
+	  }
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// TODO Auto-generated method stub

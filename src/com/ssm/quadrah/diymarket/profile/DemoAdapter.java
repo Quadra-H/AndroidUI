@@ -12,17 +12,16 @@ import android.view.animation.RotateAnimation;
 import android.widget.ArrayAdapter;
 
 import com.ssm.quadrah.diymarket.R;
-import com.ssm.quadrah.diymarket.content.Items;
 import com.ssm.quadrah.diymarket.content.endless.EndlessAdapter;
 
 class DemoAdapter extends EndlessAdapter {
   private RotateAnimation rotate=null;
   private View pendingView=null;
   
-  DemoAdapter(Context ctxt,  int textViewResourceId, ArrayList<Items> list) {
-    super(new ArrayAdapter<Items>(ctxt,
+  DemoAdapter(Context ctxt, ArrayList<Integer> list) {
+    super(new ArrayAdapter<Integer>(ctxt,
                                     R.layout.row,
-                                    textViewResourceId,
+                                    android.R.id.text1,
                                     list));
     rotate=new RotateAnimation(0f, 360f, Animation.RELATIVE_TO_SELF,
                                 0.5f, Animation.RELATIVE_TO_SELF,
@@ -34,9 +33,9 @@ class DemoAdapter extends EndlessAdapter {
   
   @Override
   protected View getPendingView(ViewGroup parent) {
-    View row=LayoutInflater.from(parent.getContext()).inflate(R.layout.row, null);
+    View row=LayoutInflater.from(parent.getContext()).inflate(R.layout.listview_row, null);
     
-    pendingView=row.findViewById(android.R.id.text1);
+    pendingView=row.findViewById(R.id.linearLayout1);
     pendingView.setVisibility(View.GONE);
     pendingView=row.findViewById(R.id.throbber);
     pendingView.setVisibility(View.VISIBLE);
@@ -58,9 +57,7 @@ class DemoAdapter extends EndlessAdapter {
       @SuppressWarnings("unchecked")
       ArrayAdapter<Integer> a=(ArrayAdapter<Integer>)getWrappedAdapter();
       
-      for (int i=0;i<25;i++) { 
-    	  a.add(a.getCount()); 
-    }
+      for (int i=0;i<25;i++) { a.add(a.getCount()); }
     }
   }
   

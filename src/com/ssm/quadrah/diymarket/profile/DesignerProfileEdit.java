@@ -1,6 +1,8 @@
 package com.ssm.quadrah.diymarket.profile;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import android.app.ActionBar;
 import android.app.Activity;
@@ -9,11 +11,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.provider.MediaStore.Images;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -24,10 +28,12 @@ import com.ssm.quadrah.diymarket.R;
 
 public class DesignerProfileEdit extends Activity {
 
-	protected static final int REQ_CODE_PICK_PICTURE = 0;	
-	TextView editDesignerName;
-	TextView editDesignerSatate;
+	protected static final int REQ_CODE_PICK_PICTURE = 3;	
+	TextView textDesignerName;
+	TextView textDesignerSatate;
 	ImageView ProfilePicture;	
+	TextView textCoverPicture;
+	ImageView imageViewCoverPicture;
 	
 	 private static final int PICK_FROM_CAMERA = 0;
 	 private static final int PICK_FROM_ALBUM = 1;
@@ -48,9 +54,9 @@ public class DesignerProfileEdit extends Activity {
 	    bar.setHomeButtonEnabled(true);
 	    
 	    ProfilePicture = (ImageView)findViewById(R.id.imageViewProfileEdit);
-	    editDesignerName = (TextView)findViewById(R.id.EditDesignerName);
-	    editDesignerSatate = (TextView)findViewById(R.id.EditDesignerState);
-	    
+	    textDesignerName = (TextView)findViewById(R.id.EditDesignerName);
+	    textDesignerSatate = (TextView)findViewById(R.id.EditDesignerState);
+	    textCoverPicture = (TextView)findViewById(R.id.textCoverPicture);
 	    
 	    
 	    
@@ -61,6 +67,13 @@ public class DesignerProfileEdit extends Activity {
 		// TODO Auto-generated method stub
 		super.onBackPressed();
 		overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
+	}
+	
+	public void functionCoverPicture(View v){
+		functionPicture(v);
+		
+//		final Intent intent = new Intent (Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//		this.startActivityForResult(intent, REQ_CODE_PICK_PICTURE);
 	}
 	
 	@Override
@@ -103,6 +116,11 @@ public class DesignerProfileEdit extends Activity {
 		switch(v.getId()){
 		case R.id.layoutDevelopers:
 			Intent i = new Intent(DesignerProfileEdit.this, DesignerProfileName.class);
+			if(textDesignerName.getText().toString() != null)
+			{
+				i.putExtra("Name", textDesignerName.getText().toString());
+			}
+			
 			startActivityForResult(i, 10);			
 			
 		}
@@ -112,6 +130,10 @@ public class DesignerProfileEdit extends Activity {
 		switch(v.getId()){
 		case R.id.layoutDevelopersState:
 			Intent i = new Intent(DesignerProfileEdit.this, DesignerProfileState.class);
+			if(textDesignerSatate.getText().toString() != null)
+			{
+				i.putExtra("State", textDesignerSatate.getText().toString());
+			}
 			startActivityForResult(i, 20);
 		}
 	}
@@ -119,9 +141,46 @@ public class DesignerProfileEdit extends Activity {
 	
 	
 	public void functionPicture(View v){
-		switch(v.getId()){
-		case R.id.imageViewProfileEdit:
-			DialogInterface.OnClickListener cameraListener = new DialogInterface.OnClickListener()
+
+			if(v.getId() == R.id.imageViewProfileEdit || v.getId() == R.id.layoutDesignerProfile)
+			{
+				DialogInterface.OnClickListener cameraListener = new DialogInterface.OnClickListener()
+			    {
+			      @Override
+			      public void onClick(DialogInterface dialog, int which)
+			      {
+			        doTakePhotoAction();
+			      }
+			    };
+			    
+			    DialogInterface.OnClickListener albumListener = new DialogInterface.OnClickListener()
+			    {
+			      @Override
+			      public void onClick(DialogInterface dialog, int which)
+			      {
+			        doTakeAlbumAction();
+			      }
+			    };
+			    
+			    DialogInterface.OnClickListener cancelListener = new DialogInterface.OnClickListener()
+			    {
+			      @Override
+			      public void onClick(DialogInterface dialog, int which)
+			      {
+			        dialog.dismiss();
+			      }
+			    };
+			    
+			    AlertDialog.Builder alert = new AlertDialog.Builder(DesignerProfileEdit.this);
+			    
+			    alert.setTitle("프로필 업로드할 이미지 선택") .setPositiveButton("사진촬영", cameraListener)
+			      .setNeutralButton("앨범선택", albumListener)
+			      .setNegativeButton("취소", cancelListener)
+			      .show();
+			}
+
+		if(v.getId() == R.id.layoutCoverPicture || v.getId() == R.id.relativeCover){
+			DialogInterface.OnClickListener cameraCoverListener = new DialogInterface.OnClickListener()
 		    {
 		      @Override
 		      public void onClick(DialogInterface dialog, int which)
@@ -130,16 +189,19 @@ public class DesignerProfileEdit extends Activity {
 		      }
 		    };
 		    
-		    DialogInterface.OnClickListener albumListener = new DialogInterface.OnClickListener()
+		    DialogInterface.OnClickListener albumCoverListener = new DialogInterface.OnClickListener()
 		    {
 		      @Override
 		      public void onClick(DialogInterface dialog, int which)
 		      {
-		        doTakeAlbumAction();
+		    	  Intent i = new Intent(Intent.ACTION_PICK);
+			  		i.setAction(Intent.ACTION_GET_CONTENT);
+			  		i.setType("image/*");
+			  		startActivityForResult(i, REQ_CODE_PICK_PICTURE);
 		      }
 		    };
 		    
-		    DialogInterface.OnClickListener cancelListener = new DialogInterface.OnClickListener()
+		    DialogInterface.OnClickListener cancelCoverListener = new DialogInterface.OnClickListener()
 		    {
 		      @Override
 		      public void onClick(DialogInterface dialog, int which)
@@ -148,16 +210,22 @@ public class DesignerProfileEdit extends Activity {
 		      }
 		    };
 		    
-		    AlertDialog.Builder alert = new AlertDialog.Builder(DesignerProfileEdit.this);
+		    AlertDialog.Builder coverAlert = new AlertDialog.Builder(DesignerProfileEdit.this);
 		    
-		    alert.setTitle("업로드할 이미지 선택") .setPositiveButton("사진촬영", cameraListener)
-		      .setNeutralButton("앨범선택", albumListener)
-		      .setNegativeButton("취소", cancelListener)
+		    coverAlert.setTitle("커버 업로드할 이미지 선택") .setPositiveButton("사진촬영", cameraCoverListener)
+		      .setNeutralButton("앨범선택", albumCoverListener)
+		      .setNegativeButton("취소", cancelCoverListener)
 		      .show();
+
+		
+					
 		}
+			
+		
 	}
 	
 
+	@SuppressWarnings("deprecation")
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// TODO Auto-generated method stub
@@ -206,25 +274,39 @@ public class DesignerProfileEdit extends Activity {
 
 		        break;
 		      }
+		      
+			case REQ_CODE_PICK_PICTURE:
+			    
+				Uri selPhotoUri = data.getData(); 
+				
+				Bitmap selPhoto = null;
+				try { 
+					
+					selPhoto = Images.Media.getBitmap(getContentResolver(), selPhotoUri );
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block e.printStackTrace();
+				}
+				
+				imageViewCoverPicture = (ImageView)findViewById(R.id.imageViewCover);
+				BitmapDrawable ob = new BitmapDrawable(selPhoto);
+				imageViewCoverPicture.setBackgroundDrawable(ob);
+								//imageViewCoverPicture.setBackgroundResource(R.drawable.collage);
+				break;
 							
 				
 			}
 			
 			if(requestCode == 10)
 			{
-				editDesignerName.setText(data.getStringExtra("data_name"));				
+				textDesignerName.setText(data.getStringExtra("data_name"));				
 			}
 			else if(requestCode == 20)
 			{
-				editDesignerSatate.setText(data.getStringExtra("data_state"));				
+				textDesignerSatate.setText(data.getStringExtra("data_state"));				
 			}
 		}
 	}
-	
-	
-	
-	
-	
-	
-
 }

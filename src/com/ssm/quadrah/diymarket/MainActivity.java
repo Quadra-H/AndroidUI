@@ -18,15 +18,20 @@ import org.json.JSONObject;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 
 public class MainActivity extends Activity {
@@ -36,8 +41,10 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-
-
+	    
+	    
+	    
+	     
 		//Account - name: dhl5091@gmail.com, type :com.google
 		//Account - name: dhl5091@gmail.com, type :com.evernote
 		//Account - name: ¿Ãµø»Ò, type :com.sec.android.app.sns3.facebook
@@ -56,7 +63,7 @@ public class MainActivity extends Activity {
 			} 
 		}   
 
-
+		
 
 		Button btnMarketMenu = (Button)findViewById(R.id.btnMarketMenu);
 		btnMarketMenu.setOnClickListener(OnClickBtnMarketMenu);
@@ -65,8 +72,8 @@ public class MainActivity extends Activity {
 		Button btnTest1 = (Button)findViewById(R.id.btnTest1);
 		btnTest1.setOnClickListener(OnClickBtnTest1);
 
-		Button btnTest2 = (Button)findViewById(R.id.btnTest2);
-		btnTest2.setOnClickListener(OnClickBtnTest2);
+//		Button btnTest2 = (Button)findViewById(R.id.btnTest2);
+//		btnTest2.setOnClickListener(OnClickBtnTest2);
 	}
 
 	View.OnClickListener OnClickBtnMarketMenu = new View.OnClickListener() {

@@ -36,6 +36,7 @@ public class MarketMenu extends Activity {
 	    
 	    ActionBar bar = getActionBar();
 	    bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#f34022")));
+	    
 	    bar.setHomeButtonEnabled(true);
 	    bar.setDisplayShowHomeEnabled(false);
 	    

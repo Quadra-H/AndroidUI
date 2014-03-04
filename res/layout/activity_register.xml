@@ -3,101 +3,109 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-<RelativeLayout
-                android:id="@+id/relativeLayoutBusinessCard"
-                android:layout_width="match_parent"
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+
+        <ImageView
+            android:id="@+id/imageViewProfile"
+            android:layout_width="88dp"
+            android:layout_height="68dp"
+            android:layout_margin="10dp"
+            android:src="@drawable/list_rectangle" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/textViewTitle"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/imageViewSpecial"
-                android:layout_alignParentTop="true"
-                android:layout_margin="20dp"
-                android:background="@drawable/businesscard_bg"
-                android:padding="15dp" >
+                android:layout_marginTop="10dp"
+                android:text="Image title 01"
+                android:textColor="#040404"
+                android:textSize="15dip"
+                android:textStyle="bold"
+                android:typeface="sans" />
 
-                <ImageView
-                    android:id="@+id/imageViewProfile"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/arrow"
-                    android:layout_marginRight="15dp" />
+            <TextView
+                android:id="@+id/desinger"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:descendantFocusability="blocksDescendants"
+                android:focusable="false"
+                android:text="DesignerID"
+                android:textColor="#343434"
+                android:textSize="10dip" />
 
-                <com.ssm.quadrah.diymarket.profile.ScrollingTextView
-                    android:id="@+id/textViewTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_toRightOf="@+id/imageViewProfile"
-                    android:ellipsize="marquee"
-                    android:marqueeRepeatLimit="marquee_forever"
-                    android:scrollHorizontally="true"
-                    android:singleLine="true"
-                    android:text="Title"
-                    android:onClick="functionTitle"
-                    android:clickable="true"
-                    android:textColor="#FFF"
-                    android:textSize="25dp"
-                    android:textStyle="bold" />
+            <RatingBar
+                android:id="@+id/rtbProductRating"
+                style="@style/foodRatingBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:isIndicator="true"
+                android:numStars="5"
+                android:rating="3.5" />
 
-                <com.ssm.quadrah.diymarket.profile.ScrollingTextView
-                    android:id="@+id/textViewDesignerID"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignLeft="@+id/textViewTitle"
-                    android:layout_below="@+id/textViewTitle"
-                    android:ellipsize="marquee"
-                    android:marqueeRepeatLimit="marquee_forever"
-                    android:scrollHorizontally="true"
-                    android:singleLine="true"
-                    android:text="DesignerID"
-                    android:textColor="#FFF" />
-
-                <com.ssm.quadrah.diymarket.profile.ScrollingTextView
-                    android:id="@+id/textViewCost"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignLeft="@+id/textViewDesignerID"
-                    android:layout_below="@+id/textViewDesignerID"
-                    android:ellipsize="marquee"
-                    android:marqueeRepeatLimit="marquee_forever"
-                    android:scrollHorizontally="true"
-                    android:singleLine="true"
-                    android:onClick="functionCost"
-                    android:text="Cost"
-                    android:textColor="#FFF" />
-
-                <Button
-                    android:id="@+id/btnRegister"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignBottom="@+id/imageViewProfile"
-                    android:layout_toRightOf="@+id/textViewDesignerID"
-                    android:text="등록하기"
-                    android:textSize="10dp" />
-
-            </RelativeLayout>
+            <TextView
+                android:id="@+id/textViewCost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:descendantFocusability="blocksDescendants"
+                android:focusable="false"
+                android:text="Free"
+                android:textColor="#343434"
+                android:textSize="10dip" />
+        </LinearLayout>
+    </LinearLayout>
             
-            <View style="@style/TurquoiseLine" />
-            
-	<LinearLayout
-      android:layout_width="match_parent" 
-      android:layout_height="match_parent"
-      android:orientation="vertical"> 
+	<RelativeLayout
+        android:id="@+id/relativeLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/linearLayout1" >
 
-      <android.support.v4.view.ViewPager
-          android:id="@+id/pager2"
-          android:layout_width="fill_parent"
-          android:layout_height="wrap_content"
-          android:layout_marginBottom="10dip" >
-          
-      </android.support.v4.view.ViewPager>
-      
-      <com.ssm.quadrah.diymarket.content.circle.CirclePageIndicator
-          android:id="@+id/pagerIndicator1"
-          android:layout_width="fill_parent"
-          android:layout_height="wrap_content"
-          android:padding="10dip" >
-          
-      </com.ssm.quadrah.diymarket.content.circle.CirclePageIndicator>
-	</LinearLayout> 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="20dp"            
+            android:text="Image list"
+            android:textColor="#F34022" />
+
+    </RelativeLayout>
+            
+            <View style="@style/profileLine" />
+            
+	<LinearLayout 
+	    android:orientation="vertical" 
+	    android:layout_height="match_parent" 
+	    android:layout_width="match_parent">
+
+	<android.support.v4.view.ViewPager 
+	    android:background="@drawable/register_below_bg"
+	    android:layout_height="0dp" 
+	    android:layout_width="fill_parent" 
+	    android:id="@+id/pager2" 
+	    android:layout_weight="1"/>
+
+	<com.ssm.quadrah.diymarket.content.circle.CirclePageIndicator 
+	    android:layout_height="wrap_content" 
+	    android:layout_width="fill_parent" 
+	    android:padding="10dip" 
+	    android:background="@color/gray"
+	    android:id="@+id/pagerIndicator1"/>
+
+	</LinearLayout>
 	
 </LinearLayout>

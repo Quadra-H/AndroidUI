@@ -113,6 +113,24 @@ public class MarketMenuLayout extends FragmentActivity {
 
 		return true;
 	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+
+		switch(item.getItemId()){
+		case R.id.action_register :
+			ActivitySplitAnimationUtil.startActivity(MarketMenuLayout.this, new Intent(MarketMenuLayout.this, MarketRegister.class));
+			break;		
+
+		case android.R.id.home:
+			finish();
+		default:
+			break;
+
+		}
+		return super.onOptionsItemSelected(item);
+	}
 
 
 
@@ -215,23 +233,7 @@ public class MarketMenuLayout extends FragmentActivity {
 
 
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// TODO Auto-generated method stub
-
-		switch(item.getItemId()){
-		case R.id.action_register :
-			ActivitySplitAnimationUtil.startActivity(MarketMenuLayout.this, new Intent(MarketMenuLayout.this, MarketRegister.class));
-			break;		
-
-		case android.R.id.home:
-			finish();
-		default:
-			break;
-
-		}
-		return super.onOptionsItemSelected(item);
-	}
+	
 
 
 

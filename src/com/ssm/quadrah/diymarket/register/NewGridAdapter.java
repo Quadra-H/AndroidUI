@@ -91,16 +91,14 @@ public class NewGridAdapter extends BaseAdapter{
 			view = mInflater.inflate(R.layout.grid_new_custom, parent, false);
 			viewHolder = new ViewHolder();	
 			viewHolder.imageView = (ImageView) view.findViewById(R.id.grid_new_item_image);
-			viewHolder.btnX = (Button)view.findViewById(R.id.btnX);
-			
-			viewHolder.btnX.setVisibility(View.GONE);
+			viewHolder.btnX = (Button)view.findViewById(R.id.btnX);			
+
 			viewHolder.btnX.setOnClickListener(OnClickRemove);
 			view.setTag(viewHolder);
 			
 			
 		}else{
-			viewHolder = (ViewHolder)view.getTag();
-			viewHolder.btnX.setVisibility(View.VISIBLE);
+			viewHolder = (ViewHolder)view.getTag();			
 		}
 		
 			

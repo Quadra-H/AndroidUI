@@ -86,6 +86,7 @@ public class MarketMenu extends Activity {
 		public void onClick(View v) {
 			// TODO Auto-generated method stub
 			Intent i = new Intent(MarketMenu.this, DesignerProfile.class);
+			i.putExtra("Account", ((DesignerAccount)getApplication()).getAccount());
 			startActivity(i);
 			
 		}

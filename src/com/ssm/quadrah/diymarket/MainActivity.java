@@ -35,6 +35,8 @@ import android.view.WindowManager;
 import android.widget.Button;
 
 public class MainActivity extends Activity {
+	
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +64,10 @@ public class MainActivity extends Activity {
 
 			} 
 		}   
+		
+		//이 아이디를 통해서 ListView에서 클릭했을 때 자신의 아이디와 비교해서 다를 경우 Profile EDIT/ADD 버튼을 없애고 Profile listview 클릭 시 편집으로 이동하게 한다.
+		((DesignerAccount)this.getApplication()).setAccount(accounts[0].name);
+		
 
 		
 

@@ -19,11 +19,14 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
+import android.app.ActionBar;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -34,12 +37,15 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ssm.quadrah.diymarket.R;
+import com.ssm.quadrah.diymarket.content.MarketMenuLayout;
 import com.ssm.quadrah.diymarket.content.circle.CirclePageIndicator;
 import com.ssm.quadrah.diymarket.content.tab.PageIndicator;
 import com.ssm.quadrah.diymarket.profile.DesignerProfileName;
@@ -60,6 +66,8 @@ public class MarketRegister extends FragmentActivity {
     private ArrayList<NewGridItems> newGridItems;
     public static List<NewGridFragment> gridFragments;
     
+    private MenuItem mSpinnerItem = null;
+    
     ArrayList<String> a;
     Iterator<String> it;
    
@@ -72,13 +80,13 @@ public class MarketRegister extends FragmentActivity {
 	    ActivitySplitAnimationUtil.animate(this, 1000);
 	    // TODO Auto-generated method stub
 	    
-	   
+	    ActionBar bar = getActionBar();
+	    bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#f34022")));
 	    
-	    editWorkTitle = (TextView)findViewById(R.id.EditDesignerName);
-	    editWorkCost = (TextView)findViewById(R.id.EditDesignerName);	    
+	    editWorkTitle = (TextView)findViewById(R.id.textViewTitle);	       
 	    
-        btnRegister = (Button)findViewById(R.id.btnRegister);
-        btnRegister.setOnClickListener(OnClickBtnRegister);
+       //btnRegister = (Button)findViewById(R.id.btnRegister);
+       //btnRegister.setOnClickListener(OnClickBtnRegister);
         
         imageView = (ImageView)findViewById(R.id.imageViewProfile);
         imageView.setOnClickListener(OnClickImage);
@@ -99,6 +107,32 @@ public class MarketRegister extends FragmentActivity {
         mIndicator.setViewPager(mPager);
        
 	}	
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// TODO Auto-generated method stub
+		getMenuInflater().inflate(R.menu.edit, menu);
+		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+
+		switch(item.getItemId()){
+		case R.id.action_register_edit :
+			
+			break;		
+
+		case android.R.id.home:
+			finish();
+		default:
+			break;
+
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
 	
 
 

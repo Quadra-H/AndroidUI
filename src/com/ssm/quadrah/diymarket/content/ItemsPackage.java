@@ -4,37 +4,42 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ssm.quadrah.diymarket.DesignerAccount;
 import com.ssm.quadrah.diymarket.R;
 import com.ssm.quadrah.diymarket.content.circle.BaseSampleActivity;
 import com.ssm.quadrah.diymarket.content.circle.CirclePageIndicator;
 import com.ssm.quadrah.diymarket.content.circle.TestFragmentAdapter;
 import com.ssm.quadrah.diymarket.content.tab.PageIndicator;
+import com.ssm.quadrah.diymarket.profile.DesignerProfile;
 
 public class ItemsPackage extends BaseSampleActivity {
 
 	public PageIndicator mIndicator;
 	private ViewPager awesomePager;
 	static public PagerAdapter pm;
+	
+	private TextView txtDesignerID;
+
 	 
 	
-	
-	 
-//	String deviceNames[] = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J",
-//	   "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W",
-//	   "X", "Y", "Z" };
-	 @Override
-	    public boolean onCreateOptionsMenu(Menu menu) {
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
 	        getMenuInflater().inflate(R.menu.menu, menu);
 	        return true;
     }
@@ -60,6 +65,15 @@ public class ItemsPackage extends BaseSampleActivity {
 	    Button btnExit = (Button)findViewById(R.id.btnExit);
 	    Button btnLike = (Button)findViewById(R.id.btnLike);
 	    Button btnBuy = (Button)findViewById(R.id.btnBuy);
+	    txtDesignerID = (TextView)findViewById(R.id.txtDesignerID);
+	    txtDesignerID.setTextColor(Color.RED);
+	    SpannableString content = new SpannableString("DesignerID"); 
+	    content.setSpan(new UnderlineSpan(), 0, content.length(), 0); 
+	    
+	    txtDesignerID.setText(content);
+	    txtDesignerID.setOnClickListener(OnClickDesignerID);
+
+	    
 	    btnLike.setOnClickListener(OnClickLike);
 	    btnBuy.setOnClickListener(OnClickBuy);
 	    btnExit.setOnClickListener(OnClickExit);
@@ -171,6 +185,19 @@ public class ItemsPackage extends BaseSampleActivity {
         
         
 	}
+	
+	View.OnClickListener OnClickDesignerID = new View.OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			Intent i = new Intent(ItemsPackage.this, DesignerProfile.class);
+			TextView txtDesignerID = (TextView)v.findViewById(R.id.txtDesignerID);			
+			i.putExtra("Account", txtDesignerID.getText().toString());
+			startActivity(i);
+			
+		}
+	};
 	
 	View.OnClickListener OnClickLike = new View.OnClickListener() {
 		

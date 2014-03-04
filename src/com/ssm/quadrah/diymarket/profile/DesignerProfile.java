@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,7 +16,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.ssm.quadrah.diymarket.DesignerAccount;
 import com.ssm.quadrah.diymarket.R;
 import com.ssm.quadrah.diymarket.content.DetailItems;
 import com.ssm.quadrah.diymarket.content.Items;
@@ -32,6 +35,9 @@ public class DesignerProfile extends ListActivity {
 	
 	DetailItems adapter;
 	
+	private String strID;
+	private String strCompareID;
+	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -43,12 +49,21 @@ public class DesignerProfile extends ListActivity {
 	    bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#f34022")));
 	    bar.setHomeButtonEnabled(true);
 	    
+	    
+	    
+	   
+	    btnWorkAdd = (Button)findViewById(R.id.btnWorkAdd);
+	    btnWorkAdd.setOnClickListener(OnClickWorkAdd);
 	    ivProfile = (ImageView)findViewById(R.id.imageViewProfilePicture);
 	    tvName = (TextView)findViewById(R.id.textViewProfileName);
 	    tvState = (TextView)findViewById(R.id.textViewState);
-	    btnWorkAdd = (Button)findViewById(R.id.btnWorkAdd);
-	    btnWorkAdd.setOnClickListener(OnClickWorkAdd);
 	    
+//	    strID = getIntent().getStringExtra("Account");//error
+//	    strCompareID = ((DesignerAccount)getApplication()).getAccount(); 
+//	    if(!strID.equals(strCompareID))
+//	    {	    	
+//	    	btnWorkAdd.setVisibility(View.GONE);
+//	    }
 	    
 	    //ivProfile.setImageResource(R.drawable.item1);
 	    
@@ -94,7 +109,11 @@ public class DesignerProfile extends ListActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// TODO Auto-generated method stub
-		getMenuInflater().inflate(R.menu.menu, menu);		 
+		//if(strID.equals(strCompareID))
+	    //{	    	
+			getMenuInflater().inflate(R.menu.menu, menu);	
+	    //}
+		
 		
 		return true;
 	}

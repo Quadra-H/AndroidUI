@@ -95,7 +95,7 @@ public class NewGridFragment extends Fragment{
 			if(images == null){
 				images = new ArrayList<ImageView>();
 				ImageView image = new ImageView(getActivity());
-			    image.setImageResource(R.drawable.arrow); // basicImage
+			    image.setImageResource(R.drawable.register_add_btn); // basicImage
 			    
 			    images.add(image);
 			}				

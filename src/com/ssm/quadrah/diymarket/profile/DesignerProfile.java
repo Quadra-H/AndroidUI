@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import android.app.ActionBar;
 import android.app.ListActivity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,7 +16,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.ssm.quadrah.diymarket.DesignerAccount;
 import com.ssm.quadrah.diymarket.R;
@@ -35,7 +34,7 @@ public class DesignerProfile extends ListActivity {
 	
 	DetailItems adapter;
 	
-	private String strID;
+	private static String strID;	
 	private String strCompareID;
 	
 	/** Called when the activity is first created. */
@@ -58,12 +57,21 @@ public class DesignerProfile extends ListActivity {
 	    tvName = (TextView)findViewById(R.id.textViewProfileName);
 	    tvState = (TextView)findViewById(R.id.textViewState);
 	    
-//	    strID = getIntent().getStringExtra("Account");//error
-//	    strCompareID = ((DesignerAccount)getApplication()).getAccount(); 
-//	    if(!strID.equals(strCompareID))
-//	    {	    	
-//	    	btnWorkAdd.setVisibility(View.GONE);
-//	    }
+	    
+	    Bundle getUserID = getIntent().getExtras();
+	    if(getUserID != null){
+	    	strID = getIntent().getStringExtra("Account");
+	    }
+	    
+	    if(strID != null)
+	    {
+		    strCompareID = ((DesignerAccount)getApplication()).getAccount(); 
+		    if(!strID.equals(strCompareID))
+		    {
+		    	btnWorkAdd.setVisibility(View.GONE);
+		    }
+	    }
+
 	    
 	    //ivProfile.setImageResource(R.drawable.item1);
 	    
@@ -101,6 +109,9 @@ public class DesignerProfile extends ListActivity {
 		}
 	};
 	
+	
+	
+	
 	@Override
 	  public Object getLastNonConfigurationInstance() {
 	    return(getListAdapter());
@@ -109,11 +120,14 @@ public class DesignerProfile extends ListActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// TODO Auto-generated method stub
-		//if(strID.equals(strCompareID))
-	    //{	    	
-			getMenuInflater().inflate(R.menu.menu, menu);	
-	    //}
-		
+	
+		if(strID != null){
+			if(strID.equals(strCompareID))
+		    {	    	
+				getMenuInflater().inflate(R.menu.menu, menu);				
+			}
+		}
+
 		
 		return true;
 	}
@@ -126,6 +140,7 @@ public class DesignerProfile extends ListActivity {
 		case R.id.action_profile_edit :
 			
 			Intent i = new Intent(DesignerProfile.this ,DesignerProfileEdit.class);
+			i.putExtra("Account", strID);
 			startActivity(i);
 			overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);;
 			break;		

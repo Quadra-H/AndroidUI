@@ -13,18 +13,19 @@
  */
 package com.ssm.quadrah.diymarket;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.logging.Logger;
+
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.SimpleAdapter;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.logging.Logger;
 
 /**
  * Helper class for displaying images retrieved asynchronously from Internet locations.

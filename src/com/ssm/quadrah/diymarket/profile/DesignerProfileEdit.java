@@ -40,7 +40,9 @@ public class DesignerProfileEdit extends Activity {
 	 private static final int CROP_FROM_CAMERA = 2;
 	 
 	 private Uri mImageCaptureUri;
+	 private String strID;
 	 
+	 Intent retIntent;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -52,6 +54,10 @@ public class DesignerProfileEdit extends Activity {
 	    ActionBar bar = getActionBar();
 	    bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#f34022")));
 	    bar.setHomeButtonEnabled(true);
+	    
+	    retIntent = getIntent();
+	    
+	    strID = retIntent.getStringExtra("Account");
 	    
 	    ProfilePicture = (ImageView)findViewById(R.id.imageViewProfileEdit);
 	    textDesignerName = (TextView)findViewById(R.id.EditDesignerName);
@@ -83,7 +89,9 @@ public class DesignerProfileEdit extends Activity {
 		switch(item.getItemId()){
 					
 		case android.R.id.home:
+			retIntent.putExtra("Account", strID);
 			finish();
+			
 			overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
 			break;
 	

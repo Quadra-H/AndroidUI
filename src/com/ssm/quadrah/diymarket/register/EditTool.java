@@ -56,7 +56,7 @@ public class EditTool extends Activity {
 	    
 	}
 	
-	
+
 
 	View.OnClickListener OnClickRegister = new View.OnClickListener() {
 		

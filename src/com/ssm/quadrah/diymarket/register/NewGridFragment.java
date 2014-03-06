@@ -1,7 +1,7 @@
 package com.ssm.quadrah.diymarket.register;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import android.annotation.SuppressLint;
@@ -21,7 +21,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 
@@ -39,48 +38,45 @@ public class NewGridFragment extends Fragment{
 	private static final int CROP_FROM_CAMERA = 5;
     private Uri mImageCaptureUri;
     
+    private String strLast = "_lst";
+    
 	private GridView mGridView;
 	private NewGridAdapter mGridAdapter;
-	private ArrayList<NewGridItems> newGridItems;
-	private ArrayList<ImageView> images = null;
-	
-	
-	
-	
+	//private ArrayList<NewGridItems> newGridItems;
+	private LinkedList<NewGridItems> newGridItems;	
 	private Activity activity;	
-	List<NewGridFragment> gridFragments;
+	private List<NewGridFragment> gridFragments;
 	protected ViewPager mPager;
+	
+	public PagerAdapter pm;
 	
 	private boolean mCreate;
 	ViewHolder viewHolder;
 	
 	
-	public ArrayList<ImageView> getImageList()
-	{
-		return images;
-	}
 	
-	public NewGridFragment(ArrayList<NewGridItems> newGridItems, Activity activity, List<NewGridFragment> gridFragments, PagerAdapter pm){
+	public NewGridFragment(LinkedList<NewGridItems> newGridItems, Activity activity, List<NewGridFragment> gridFragments){
 		
 		this.newGridItems = newGridItems;
 		this.activity = activity;		
 		this.gridFragments = gridFragments;
-		
-		
 		
 		mPager = (ViewPager)activity.findViewById(R.id.pager2);		
 		viewHolder = new ViewHolder();		
 		mCreate = true;      
 	}
 	
-	public NewGridFragment(ArrayList<NewGridItems> itmLst,List<NewGridFragment> gridFragments, Activity activity, ViewPager mPager)
+	public NewGridFragment(LinkedList<NewGridItems> newGridItems, Activity activity, List<NewGridFragment> gridFragments, ViewPager mPager,PagerAdapter pm)
 	{
 		this.activity = activity;
-		this.newGridItems = itmLst;	
+		this.newGridItems = newGridItems;	
 		this.gridFragments = gridFragments;
 		this.mPager = mPager;
+		this.pm = pm;
 		mCreate =true;
 	}
+	
+
 	
 	
 
@@ -92,23 +88,19 @@ public class NewGridFragment extends Fragment{
 		// TODO Auto-generated method stub		
 		if(activity != null){
 			
-			if(images == null){
-				images = new ArrayList<ImageView>();
-				ImageView image = new ImageView(getActivity());
-			    image.setImageResource(R.drawable.register_add_btn); // basicImage
-			    
-			    images.add(image);
-			}				
+			if(newGridItems.get(0).image == null){
+				newGridItems.get(0).image = new ImageView(activity);
+				newGridItems.get(0).image.setImageResource(R.drawable.register_add_btn); // basicImage
+			}
+			
 
-			mGridAdapter = new NewGridAdapter(activity, newGridItems, images);
-			
-			
+			if(pm.idx ==0)
+				mGridAdapter = new NewGridAdapter(activity, newGridItems, pm.idx);
+			else if(pm.idx == 1)
+				mGridAdapter = new NewGridAdapter(activity, newGridItems, pm.idx);
 			
 			if(mGridView != null){
-				
 				mGridView.setAdapter(mGridAdapter);
-				
-				
 			}
 			
 			mGridView.setOnItemClickListener(new OnItemClickListener(){
@@ -117,28 +109,27 @@ public class NewGridFragment extends Fragment{
 				public void onItemClick(AdapterView<?> parent, View view,
 						int position, long id) {
 					// TODO Auto-generated method stub		
-					
+
+					 Bundle extras = new Bundle();
 					
 					if(newGridItems.get(position).title != "registerBasic"){
 						
-						ImageView tempImage = images.get(position);
+						ImageView tempImage = newGridItems.get(position).image;
 					    BitmapDrawable bitmapDrawable = ((BitmapDrawable) tempImage.getDrawable());
 					    Bitmap image = bitmapDrawable.getBitmap(); 
-					    Bundle extras = new Bundle();
+					   
 					    extras.putParcelable("imagebitmap", image);
 					    
 						Intent intent = new Intent(getActivity(), EditTool.class);
 						intent.putExtras(extras);
-						intent.putExtra("position", position);
+						intent.putExtra("position", position);						
 						
 						startActivityForResult(intent, IMAGE_REQUSET); 	 	
+					}else {						
+						Intent intent = new Intent(getActivity(), EditTool.class);	
+						intent.putExtra("position", position);	
+						startActivityForResult(intent, IMAGE_REQUSET); 	 
 					}
-					else {						
-						functionPicture(position);
-					}
-					
-					
-					onGridItemClick((GridView) parent, view, position, id);
 				}
 			});
 		}
@@ -148,39 +139,9 @@ public class NewGridFragment extends Fragment{
 		
 
 
-	public void onGridItemClick(GridView g, View v, int position, long id) {
-		
-		ViewHolder viewHolder = (ViewHolder)v.getTag();
-//		Log.d("v.getId", " : " + v.getId());
-		Log.d("g.getId", " : " + g.getId());
-		Log.d("viewHolder.btnX.getId()", " : " + R.id.btnX);	
-		if(g.getId() == viewHolder.btnX.getId()){
-			NewGridItems removeItem = (NewGridItems)viewHolder.btnX.getTag();
-			
-			
-			for(Iterator<NewGridItems> it = newGridItems.iterator(); it.hasNext();)
-			{
-				NewGridItems removeWork = it.next();				
-				if(removeWork.id == removeItem.id)
-				{
-					it.remove();
-					Log.d("removeWork", " " + removeWork.id);	
-					images.remove(position);
-				}
-			}									
-			
-			mGridAdapter.notifyDataSetChanged();
-		}
-			
-		
-	}
- 
-	
 
 	
 	public void functionPicture(final int position){
-		
-			
 		    
 			DialogInterface.OnClickListener editTool = new DialogInterface.OnClickListener()
 		    {
@@ -231,7 +192,6 @@ public class NewGridFragment extends Fragment{
         
 	}
 
-
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// TODO Auto-generated method stub
@@ -254,51 +214,52 @@ public class NewGridFragment extends Fragment{
 			if(requestCode == IMAGE_REQUSET)
 			{					
 				
-				if(newGridItems.size() % 12 == 0 && mCreate)
+				if(newGridItems.size() % 2 == 0 && mCreate)
 				{
 					Bitmap thumbnail = (Bitmap) data.getExtras().get("img");
 					ImageView image = new ImageView(getActivity());
 					image.setImageBitmap(thumbnail);
-					images.get(position).setImageDrawable(image.getDrawable());
-					mGridAdapter.viewHolder.btnX.setVisibility(View.VISIBLE);
-					mGridAdapter.notifyDataSetChanged();
-
 					
+					newGridItems.get(position).image.setImageDrawable(image.getDrawable());
+									
+					mGridAdapter.notifyDataSetChanged();
 					
 					position = 0;
 					
-					ArrayList<NewGridItems> itmLst = new ArrayList<NewGridItems>();
+					
+					
 					NewGridItems itm7 = new NewGridItems(position, "registerBasic");
-					itmLst.add(itm7);
+					newGridItems.add(itm7);
+					image = new ImageView(getActivity());
+				    image.setImageResource(R.drawable.register_add_btn);
+					itm7.image = image;
+					
+					
 					
 					mCreate = false;
-					gridFragments.add(new NewGridFragment(itmLst, gridFragments, activity, mPager));
+					pm.idx++;
+					gridFragments.add(new NewGridFragment(newGridItems, activity, gridFragments,  mPager, pm));
 					mPager.getAdapter().notifyDataSetChanged();
 				}
 				else if(newGridItems.get(position).title != "registerBasic"){
-					Log.d("position", "position : " + position);
+					
 					
 					Bitmap thumbnail = (Bitmap) data.getExtras().get("img");
 					ImageView image = new ImageView(getActivity());
 					image.setImageBitmap(thumbnail);
-					images.get(position).setImageDrawable(image.getDrawable());
-					mGridAdapter.viewHolder.btnX.setVisibility(View.VISIBLE);
-					//newGridItems.get(position).btnX.setVisibility(View.VISIBLE);
+					newGridItems.get(position).image.setImageDrawable(image.getDrawable());
 					
 					mGridAdapter.notifyDataSetChanged();
 					
-					
-					
-					if(newGridItems.size() < 12 && newGridItems.get(position).flag == 1){
+					if(newGridItems.size() < 2 && newGridItems.get(position).flag == 1){
 						newGridItems.get(position).flag = 0;
 						image = new ImageView(getActivity());
-					    image.setImageResource(R.drawable.arrow);
+					    image.setImageResource(R.drawable.register_add_btn);
 					    
-						images.add(image);
-						
 						position = position + 1;
 						
 			            NewGridItems newGridItem = new NewGridItems(position, "registerBasic");
+			            newGridItem.image = image;
 			            
 			            newGridItems.add(newGridItem);			            
 						mGridAdapter.notifyDataSetChanged();
@@ -315,7 +276,8 @@ public class NewGridFragment extends Fragment{
 		// TODO Auto-generated method stub
 		View view = inflater.inflate(R.layout.new_grid, container, false);
 		mGridView = (GridView)view.findViewById(R.id.newGridView);
-		//mGridView.setOverScrollMode(View.OVER_SCROLL_NEVER);
+		
+
 		return view;
 	}
 	

@@ -2,61 +2,55 @@ package com.ssm.quadrah.diymarket.register;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
+import java.util.LinkedList;
 
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import com.ssm.quadrah.diymarket.R;
 
 public class NewGridAdapter extends BaseAdapter{
 
 	private Context context;
-	private ArrayList<NewGridItems> newGridItems;
-	private ArrayList<ImageView> images;
-	
-	
-	
-	private LayoutInflater mInflater;
-	
-	public ViewHolder viewHolder = null;
-	
-	
-	
+	private LinkedList<NewGridItems> newGridItems;
 
-	public NewGridAdapter(Context context, ArrayList<NewGridItems> newGridItems, ArrayList<ImageView> images)
+	private LayoutInflater mInflater;	
+	public ViewHolder viewHolder = null;
+
+
+	int idx;
+
+	public NewGridAdapter(Context context, LinkedList<NewGridItems> newGridItems, int idx)
 	{
 		this.context = context;
-		
-		mInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		
 		this.newGridItems = newGridItems;
-		this.images = images;
+
+		this.idx = idx;
+		mInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	}
 
 
 	@Override
 	public int getCount() {
 		// TODO Auto-generated method stub
-		if(newGridItems != null){							  
-			return newGridItems.size();
+		if(newGridItems != null){
+			return newGridItems.size()-2*idx; 
+
 		}
 		return 0;
 	}
 
 	@Override
-	 public void notifyDataSetChanged() {
-	  super.notifyDataSetChanged();
-	 }
-	
+	public void notifyDataSetChanged() {
+		super.notifyDataSetChanged();
+	}
+
 	@Override
 	public Object getItem(int position) {
 		// TODO Auto-generated method stub
@@ -65,8 +59,8 @@ public class NewGridAdapter extends BaseAdapter{
 		}
 		return null;
 	}
-	
-	public void setItemsList(ArrayList<NewGridItems> newGridItems){
+
+	public void setItemsList(LinkedList<NewGridItems> newGridItems){
 		this.newGridItems = newGridItems;
 	}
 
@@ -79,65 +73,74 @@ public class NewGridAdapter extends BaseAdapter{
 		return 0;
 	}
 
-	
+
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		// TODO Auto-generated method stub
 		View view = convertView;
-		
-		if(view == null){
-			
-			view = mInflater.inflate(R.layout.grid_new_custom, parent, false);
-			viewHolder = new ViewHolder();	
-			viewHolder.imageView = (ImageView) view.findViewById(R.id.grid_new_item_image);
-			viewHolder.btnX = (Button)view.findViewById(R.id.btnX);			
 
+		if(view == null){
+
+			view = mInflater.inflate(R.layout.grid_new_custom, parent, false);
+			viewHolder = new ViewHolder();			
+			viewHolder.imageView = (ImageView) view.findViewById(R.id.grid_new_item_image);
+			viewHolder.btnX = (Button)view.findViewById(R.id.btnX);
 			viewHolder.btnX.setOnClickListener(OnClickRemove);
 			view.setTag(viewHolder);
-			
-			
+
+
 		}else{
 			viewHolder = (ViewHolder)view.getTag();			
 		}
-		
-			
+
+
 		setCatImage(position, viewHolder);
-		
+
 		return view;
 	}
-	
+
 	View.OnClickListener OnClickRemove = new View.OnClickListener() {
-		
+
 		@Override
 		public void onClick(View v) {
 			// TODO Auto-generated method stub
-			NewGridItems removeItem = (NewGridItems)v.getTag();			
+			NewGridItems removeItem = (NewGridItems)v.getTag();
+
 			Log.d("removeItem", "remove : " + removeItem.id );
 			for(Iterator<NewGridItems> it = newGridItems.iterator(); it.hasNext();)
 			{
 				NewGridItems removeWork = it.next();
-				
-				
-				if(removeWork.id == removeItem.id)
+
+				if(removeWork.id == removeItem.id && removeWork.title == removeItem.title && removeWork.title != "registerBasic")
 				{
 					it.remove();
-					
+
 					Log.d("removeWork", " " + removeWork.id);	
 				}
 			}						
-			
+
 			notifyDataSetChanged();
 		}
 	};
-	
-	
 
-	public void setCatImage(int pos, ViewHolder viewHolder) {		
+
+
+	public void setCatImage(int pos, ViewHolder viewHolder) {	
 		
-		viewHolder.imageView.setImageDrawable(images.get(pos).getDrawable());
-		viewHolder.btnX.setTag(newGridItems.get(pos));
 		
 		
+		Log.d("setCatImage", idx+ " : " + pos + " : " + newGridItems.size());
+			
+		
+		viewHolder.imageView.setImageDrawable(newGridItems.get((idx*2)+pos).image.getDrawable());
+		viewHolder.btnX.setVisibility(View.GONE);
+		viewHolder.btnX.setTag(newGridItems.get(pos));	
+		
+		
+		if(newGridItems.get((idx*2)+pos).title != "registerBasic"){
+			viewHolder.btnX.setVisibility(View.VISIBLE);
+
+		}
 	}
 }

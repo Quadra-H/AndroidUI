@@ -7,6 +7,7 @@ import android.widget.ImageView;
 public class NewGridItems {
 	 public int id;
 	 public int flag = 1;	 
+	 public ImageView image;
 	 public String title;
 	 
 	 

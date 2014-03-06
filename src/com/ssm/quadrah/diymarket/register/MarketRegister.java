@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.http.HttpResponse;
@@ -20,17 +21,17 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
 import android.app.ActionBar;
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -40,12 +41,15 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.ssm.quadrah.diymarket.DesignerAccount;
 import com.ssm.quadrah.diymarket.R;
-import com.ssm.quadrah.diymarket.content.MarketMenuLayout;
 import com.ssm.quadrah.diymarket.content.circle.CirclePageIndicator;
 import com.ssm.quadrah.diymarket.content.tab.PageIndicator;
 import com.ssm.quadrah.diymarket.profile.DesignerProfileName;
@@ -58,12 +62,14 @@ public class MarketRegister extends FragmentActivity {
     protected PageIndicator mIndicator;
     public static PagerAdapter pm;
     
-    private TextView editWorkTitle;
-    private TextView editWorkCost;
+    private TextView txtWorkTitle;
+    private TextView txtWorkCost;
+    private TextView txtDesingerID;
     private ImageView imageView;
     private Button btnRegister;
   
-    private ArrayList<NewGridItems> newGridItems;
+    //private ArrayList<NewGridItems> newGridItems;
+    private LinkedList<NewGridItems> newGridItems;
     public static List<NewGridFragment> gridFragments;
     
     private MenuItem mSpinnerItem = null;
@@ -83,26 +89,29 @@ public class MarketRegister extends FragmentActivity {
 	    ActionBar bar = getActionBar();
 	    bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#f34022")));
 	    
-	    editWorkTitle = (TextView)findViewById(R.id.textViewTitle);	       
+	    txtWorkTitle = (TextView)findViewById(R.id.textViewTitle);
+	    txtDesingerID = (TextView)findViewById(R.id.desingerID);
+	    txtDesingerID.setText(((DesignerAccount)getApplication()).getAccount());
+	    txtWorkTitle.setOnClickListener(OnClickTitle);
 	    
-       //btnRegister = (Button)findViewById(R.id.btnRegister);
-       //btnRegister.setOnClickListener(OnClickBtnRegister);
-        
         imageView = (ImageView)findViewById(R.id.imageViewProfile);
         imageView.setOnClickListener(OnClickImage);
         
         mPager = (ViewPager)findViewById(R.id.pager2);        
         mIndicator = (CirclePageIndicator)findViewById(R.id.pagerIndicator1);
         
-        newGridItems = new ArrayList<NewGridItems>();
+        newGridItems = new LinkedList<NewGridItems>();
         
         NewGridItems basicItem = new NewGridItems(0, "registerBasic");    
         newGridItems.add(basicItem);
         
         gridFragments = new ArrayList<NewGridFragment>();        
-        gridFragments.add(new NewGridFragment(newGridItems, MarketRegister.this, gridFragments, pm));
+        gridFragments.add(new NewGridFragment(newGridItems, MarketRegister.this, gridFragments));
         
         pm = new PagerAdapter(getSupportFragmentManager(), gridFragments);
+        pm.idx = 0;
+        gridFragments.get(0).pm = pm;
+        
         mPager.setAdapter(pm);
         mIndicator.setViewPager(mPager);
        
@@ -132,6 +141,37 @@ public class MarketRegister extends FragmentActivity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
+	
+	EditText editTitle;
+	
+	View.OnClickListener OnClickTitle = new View.OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			View dialog = View.inflate(getApplicationContext(), R.layout.edittool_dialog, null);  
+            final AlertDialog ad = new AlertDialog.Builder(MarketRegister.this).setView(dialog).create();  
+            editTitle = (EditText) dialog.findViewById(R.id.Title);
+            editTitle.setSingleLine();
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(txtWorkTitle, InputMethodManager.SHOW_FORCED);
+           
+            
+            
+            dialog.findViewById(R.id.completeButton).setOnClickListener(new OnClickListener() {  
+                  
+                @Override  
+                public void onClick(View v) {  
+                	txtWorkTitle.setText(editTitle.getText().toString());        			
+                    ad.dismiss();  
+                      
+                      
+                }  
+            });  
+            
+            ad.show();  
+		}
+	};
 
 	
 
@@ -355,9 +395,7 @@ public class MarketRegister extends FragmentActivity {
 		@Override
 		public void onClick(View arg0) {
 			// TODO Auto-generated method stub
-			//ArrayList<ImageView> list = gridFragments.get(0).getImageList();
-			//ArrayList<ImageView> list1 = gridFragments.get(1).getImageList()
-			
+		
 			
 			finish();
 		}
@@ -395,11 +433,11 @@ public class MarketRegister extends FragmentActivity {
 		{
 			if(requestCode == 10)
 			{				
-				editWorkTitle.setText(data.getStringExtra("data_title"));				
+				txtWorkTitle.setText(data.getStringExtra("data_title"));				
 			}
 			else if(requestCode == 20)
 			{
-				editWorkCost.setText(data.getStringExtra("data_cost"));				
+				txtWorkCost.setText(data.getStringExtra("data_cost"));				
 			}
 			else if(requestCode == 30)
 			{				
@@ -412,7 +450,9 @@ public class MarketRegister extends FragmentActivity {
 
 	public class PagerAdapter extends FragmentStatePagerAdapter {
 		  private List<NewGridFragment> fragments;
-		 
+		
+		  public int idx;
+		  
 		  @Override
 		public void notifyDataSetChanged() {
 			// TODO Auto-generated method stub

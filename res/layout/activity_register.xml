@@ -34,7 +34,7 @@
                 android:typeface="sans" />
 
             <TextView
-                android:id="@+id/desinger"
+                android:id="@+id/desingerID"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:descendantFocusability="blocksDescendants"

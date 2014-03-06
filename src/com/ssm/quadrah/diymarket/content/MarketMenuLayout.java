@@ -5,8 +5,11 @@ import java.util.List;
 
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -120,6 +123,9 @@ public class MarketMenuLayout extends FragmentActivity {
 
 		switch(item.getItemId()){
 		case R.id.action_register :
+			
+			
+			
 			ActivitySplitAnimationUtil.startActivity(MarketMenuLayout.this, new Intent(MarketMenuLayout.this, MarketRegister.class));
 			break;		
 

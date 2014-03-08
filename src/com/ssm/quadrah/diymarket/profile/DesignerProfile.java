@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -24,6 +25,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.ssm.quadrah.diymarket.Constants;
 import com.ssm.quadrah.diymarket.DesignerAccount;
 import com.ssm.quadrah.diymarket.R;
 import com.ssm.quadrah.diymarket.content.DetailItems;
@@ -41,6 +43,8 @@ public class DesignerProfile extends Activity {
 	private Button btnWorkAdd;
 	
 	DetailItems adapter;
+	
+	int type = 0;
 	
 	protected static final int LAYOUT_MENU = 0;
 	protected static final int BACKGROUND_MENU = 1;
@@ -60,9 +64,6 @@ public class DesignerProfile extends Activity {
 	    
 	    // TODO Auto-generated method stub
 	    
-	    ActionBar bar = getActionBar();
-	    bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#f34022")));
-	    bar.setHomeButtonEnabled(true);	    
 	   
 	    btnWorkAdd = (Button)findViewById(R.id.btnWorkAdd);
 	    btnWorkAdd.setOnClickListener(OnClickWorkAdd);
@@ -72,11 +73,25 @@ public class DesignerProfile extends Activity {
 	    
 	   
 	    Bundle getUserID = getIntent().getExtras();
+	    type = getIntent().getIntExtra("type", type);
+	    
 	    if(getUserID != null){
 	    	strID = getIntent().getStringExtra("Account");
 	    }
 	    
-	    
+	    ActionBar bar = getActionBar();
+		bar.setHomeButtonEnabled(true);	    
+		bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#f34022")));	   
+		bar.setTitle("PROFILE");
+		
+		int actionBarTitleId = Resources.getSystem().getIdentifier("action_bar_title", "id", "android");
+		if (actionBarTitleId > 0) {
+		    TextView title = (TextView) findViewById(actionBarTitleId);
+		    if (title != null) {
+		        title.setTextColor(Color.WHITE);
+		    }
+		}
+	   
 	    
 	    ListView listView = (ListView)findViewById(R.id.listviewProfile);
 		ArrayList<Items> listItems = new ArrayList<Items>();  

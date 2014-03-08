@@ -65,7 +65,7 @@
          <View style="@style/itempackage" />
          
           <Button
-            android:id="@+id/button2"
+            android:id="@+id/btnSticker"
             android:layout_width="wrap_content"
             android:clickable="true"
             android:background="@drawable/btn_menu_stickermarket_selector"
@@ -73,7 +73,7 @@
          <View style="@style/itempackage" />
          
           <Button
-            android:id="@+id/button2"
+            android:id="@+id/btnFrame"
             android:layout_width="wrap_content"
             android:clickable="true"
             android:background="@drawable/btn_menu_framemarket_selector"

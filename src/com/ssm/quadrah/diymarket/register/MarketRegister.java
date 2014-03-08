@@ -25,6 +25,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
@@ -51,6 +52,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ssm.quadrah.diymarket.Constants;
 import com.ssm.quadrah.diymarket.DesignerAccount;
 import com.ssm.quadrah.diymarket.R;
 import com.ssm.quadrah.diymarket.content.circle.CirclePageIndicator;
@@ -77,6 +79,8 @@ public class MarketRegister extends FragmentActivity {
     
     private MenuItem mSpinnerItem = null;
     
+    int type = 0;
+    
     ArrayList<String> a;
     Iterator<String> it;
    
@@ -89,8 +93,36 @@ public class MarketRegister extends FragmentActivity {
 	    ActivitySplitAnimationUtil.animate(this, 1000);
 	    // TODO Auto-generated method stub
 	    
-	    ActionBar bar = getActionBar();
-	    bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#f34022")));
+	    Intent intent = getIntent();
+		type = intent.getIntExtra("type", type);
+		
+		ActionBar bar = getActionBar();
+		bar.setHomeButtonEnabled(true);	    
+		bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#f34022")));	   
+		
+		int actionBarTitleId = Resources.getSystem().getIdentifier("action_bar_title", "id", "android");
+		if (actionBarTitleId > 0) {
+		    TextView title = (TextView) findViewById(actionBarTitleId);
+		    if (title != null) {
+		        title.setTextColor(Color.WHITE);
+		    }
+		}
+		
+		switch(type)
+		{
+		case Constants.TYPE_LAYOUT:
+			bar.setTitle("LAYOUT");
+			break;
+		case Constants.TYPE_BACKGROUND:
+			bar.setTitle("BACKGROUND");
+			break;
+		case Constants.TYPE_STICKER:
+			bar.setTitle("STICKER");
+			break;
+		case Constants.TYPE_FRAME:
+			bar.setTitle("FRAME");
+			break;
+		}
 	    
 	    txtWorkTitle = (TextView)findViewById(R.id.textViewTitle);
 	    txtDesingerID = (TextView)findViewById(R.id.desingerID);

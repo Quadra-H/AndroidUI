@@ -5,12 +5,10 @@ import java.util.List;
 
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
@@ -33,6 +31,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
@@ -78,9 +77,35 @@ public class MarketMenuLayout extends FragmentActivity {
 		// TODO Auto-generated method stub
 
 		Intent intent = getIntent();
-		type = intent.getExtras().getInt(Constants.TYPE_KEY);
+		type = intent.getIntExtra("type", type);
 		
+		ActionBar bar = getActionBar();
+		bar.setHomeButtonEnabled(true);	    
+		bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#f34022")));	   
 		
+		int actionBarTitleId = Resources.getSystem().getIdentifier("action_bar_title", "id", "android");
+		if (actionBarTitleId > 0) {
+		    TextView title = (TextView) findViewById(actionBarTitleId);
+		    if (title != null) {
+		        title.setTextColor(Color.WHITE);
+		    }
+		}
+		
+		switch(type)
+		{
+		case Constants.TYPE_LAYOUT:
+			bar.setTitle("LAYOUT");
+			break;
+		case Constants.TYPE_BACKGROUND:
+			bar.setTitle("BACKGROUND");
+			break;
+		case Constants.TYPE_STICKER:
+			bar.setTitle("STICKER");
+			break;
+		case Constants.TYPE_FRAME:
+			bar.setTitle("FRAME");
+			break;
+		}
 		
 		ArrayList<Items> itemList = new ArrayList<Items>();
 		
@@ -93,9 +118,7 @@ public class MarketMenuLayout extends FragmentActivity {
 	    indicator.setViewPager(pager);		
 	    
 	    
-	    ActionBar bar = getActionBar();
-		bar.setHomeButtonEnabled(true);	    
-		bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#f34022")));	    
+	    
 	    
 		
 		////// get PkgInfoList 
@@ -123,7 +146,9 @@ public class MarketMenuLayout extends FragmentActivity {
 
 		switch(item.getItemId()){
 		case R.id.action_register :
-			ActivitySplitAnimationUtil.startActivity(MarketMenuLayout.this, new Intent(MarketMenuLayout.this, MarketRegister.class));
+			Intent i =  new Intent(MarketMenuLayout.this, MarketRegister.class);
+			i.putExtra("type", type);			
+			ActivitySplitAnimationUtil.startActivity(MarketMenuLayout.this, i);
 			break;		
 
 		case android.R.id.home:

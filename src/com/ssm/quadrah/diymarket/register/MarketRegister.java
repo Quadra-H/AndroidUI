@@ -23,6 +23,7 @@ import org.json.JSONObject;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
@@ -38,6 +39,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -47,6 +49,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ssm.quadrah.diymarket.DesignerAccount;
 import com.ssm.quadrah.diymarket.R;
@@ -109,8 +112,8 @@ public class MarketRegister extends FragmentActivity {
         gridFragments.add(new NewGridFragment(newGridItems, MarketRegister.this, gridFragments));
         
         pm = new PagerAdapter(getSupportFragmentManager(), gridFragments);
-        pm.idx = 0;
-        gridFragments.get(0).pm = pm;
+        
+        
         
         mPager.setAdapter(pm);
         mIndicator.setViewPager(mPager);
@@ -123,6 +126,7 @@ public class MarketRegister extends FragmentActivity {
 		getMenuInflater().inflate(R.menu.edit, menu);
 		return true;
 	}
+	AlertDialog dialog; 
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -130,7 +134,52 @@ public class MarketRegister extends FragmentActivity {
 
 		switch(item.getItemId()){
 		case R.id.action_register_edit :
-			
+			final CharSequence[] items = {"Love","Winter","Animal"};
+            // arraylist to keep the selected items
+            final ArrayList seletedItems=new ArrayList();
+           
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("태그를 선택하세요.");
+            builder.setMultiChoiceItems(items, null,
+                    new DialogInterface.OnMultiChoiceClickListener() {
+           
+             @Override
+             public void onClick(DialogInterface dialog, int indexSelected,
+                     boolean isChecked) {
+                 if (isChecked) {
+                     seletedItems.add(indexSelected);
+                 } else if (seletedItems.contains(indexSelected)) {
+           
+                     seletedItems.remove(Integer.valueOf(indexSelected));
+                 }
+             }
+         })
+         .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+             @Override
+             public void onClick(DialogInterface dialog, int id) {
+            	 SparseBooleanArray CheCked = ((AlertDialog)dialog).getListView().getCheckedItemPositions();
+            	 if(CheCked.get(0) == true){
+            		 Toast.makeText(MarketRegister.this, "Love", Toast.LENGTH_SHORT).show();
+            	 }
+            	 if(CheCked.get(1) == true){
+            		 Toast.makeText(MarketRegister.this, "Winter", Toast.LENGTH_SHORT).show();
+            	 }
+            	 if(CheCked.get(2) == true){
+            		 Toast.makeText(MarketRegister.this, "Animal", Toast.LENGTH_SHORT).show();
+            	 }
+            	 finish();
+                
+             }
+         })
+         .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+             @Override
+             public void onClick(DialogInterface dialog, int id) {
+                dialog.dismiss();
+             }
+         });
+   
+            dialog = builder.create();
+            dialog.show();
 			break;		
 
 		case android.R.id.home:
@@ -451,7 +500,6 @@ public class MarketRegister extends FragmentActivity {
 	public class PagerAdapter extends FragmentStatePagerAdapter {
 		  private List<NewGridFragment> fragments;
 		
-		  public int idx;
 		  
 		  @Override
 		public void notifyDataSetChanged() {

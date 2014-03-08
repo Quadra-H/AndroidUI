@@ -23,8 +23,10 @@ public class MarketMenu extends Activity {
 	    setContentView(R.layout.activity_marketmenu);
 	    // TODO Auto-generated method stub
 	    Button btnLayout = (Button)findViewById(R.id.btnLayout);
+	    
+	    
 	    btnLayout.setTextSize(TypedValue.COMPLEX_UNIT_PX, 40);
-	    btnLayout.setOnClickListener(OnClickBtnLayout);
+	    btnLayout.setOnClickListener(OnClickBtnLayout);	    
 	    
 	    Button btnMy = (Button)findViewById(R.id.btnMy);
 	    btnMy.setTextSize(TypedValue.COMPLEX_UNIT_PX, 40);

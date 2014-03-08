@@ -1,6 +1,5 @@
 package com.ssm.quadrah.diymarket.register;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,7 +24,6 @@ import android.widget.GridView;
 import android.widget.ImageView;
 
 import com.ssm.quadrah.diymarket.R;
-import com.ssm.quadrah.diymarket.register.MarketRegister.PagerAdapter;
 
 @SuppressLint("ValidFragment")
 public class NewGridFragment extends Fragment{
@@ -48,7 +46,7 @@ public class NewGridFragment extends Fragment{
 	private List<NewGridFragment> gridFragments;
 	protected ViewPager mPager;
 	
-	public PagerAdapter pm;
+	
 	
 	private boolean mCreate;
 	ViewHolder viewHolder;
@@ -66,13 +64,13 @@ public class NewGridFragment extends Fragment{
 		mCreate = true;      
 	}
 	
-	public NewGridFragment(LinkedList<NewGridItems> newGridItems, Activity activity, List<NewGridFragment> gridFragments, ViewPager mPager,PagerAdapter pm)
+	public NewGridFragment(LinkedList<NewGridItems> newGridItems, Activity activity, List<NewGridFragment> gridFragments, ViewPager mPager)
 	{
 		this.activity = activity;
 		this.newGridItems = newGridItems;	
 		this.gridFragments = gridFragments;
 		this.mPager = mPager;
-		this.pm = pm;
+		
 		mCreate =true;
 	}
 	
@@ -94,10 +92,9 @@ public class NewGridFragment extends Fragment{
 			}
 			
 
-			if(pm.idx ==0)
-				mGridAdapter = new NewGridAdapter(activity, newGridItems, pm.idx);
-			else if(pm.idx == 1)
-				mGridAdapter = new NewGridAdapter(activity, newGridItems, pm.idx);
+			
+			mGridAdapter = new NewGridAdapter(activity, newGridItems);
+			
 			
 			if(mGridView != null){
 				mGridView.setAdapter(mGridAdapter);
@@ -214,7 +211,7 @@ public class NewGridFragment extends Fragment{
 			if(requestCode == IMAGE_REQUSET)
 			{					
 				
-				if(newGridItems.size() % 2 == 0 && mCreate)
+				if(newGridItems.size() % 4 == 0 && mCreate)
 				{
 					Bitmap thumbnail = (Bitmap) data.getExtras().get("img");
 					ImageView image = new ImageView(getActivity());
@@ -227,9 +224,10 @@ public class NewGridFragment extends Fragment{
 					position = 0;
 					
 					
-					
+					LinkedList<NewGridItems> itmList = new LinkedList<NewGridItems>();
 					NewGridItems itm7 = new NewGridItems(position, "registerBasic");
-					newGridItems.add(itm7);
+					
+					itmList.add(itm7);
 					image = new ImageView(getActivity());
 				    image.setImageResource(R.drawable.register_add_btn);
 					itm7.image = image;
@@ -237,8 +235,8 @@ public class NewGridFragment extends Fragment{
 					
 					
 					mCreate = false;
-					pm.idx++;
-					gridFragments.add(new NewGridFragment(newGridItems, activity, gridFragments,  mPager, pm));
+					
+					gridFragments.add(new NewGridFragment(itmList, activity, gridFragments,  mPager));
 					mPager.getAdapter().notifyDataSetChanged();
 				}
 				else if(newGridItems.get(position).title != "registerBasic"){
@@ -251,7 +249,7 @@ public class NewGridFragment extends Fragment{
 					
 					mGridAdapter.notifyDataSetChanged();
 					
-					if(newGridItems.size() < 2 && newGridItems.get(position).flag == 1){
+					if(newGridItems.size() < 4 && newGridItems.get(position).flag == 1){
 						newGridItems.get(position).flag = 0;
 						image = new ImageView(getActivity());
 					    image.setImageResource(R.drawable.register_add_btn);

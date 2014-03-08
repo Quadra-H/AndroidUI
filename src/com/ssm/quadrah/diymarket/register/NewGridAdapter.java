@@ -24,14 +24,14 @@ public class NewGridAdapter extends BaseAdapter{
 	public ViewHolder viewHolder = null;
 
 
-	int idx;
+	
 
-	public NewGridAdapter(Context context, LinkedList<NewGridItems> newGridItems, int idx)
+	public NewGridAdapter(Context context, LinkedList<NewGridItems> newGridItems)
 	{
 		this.context = context;
 		this.newGridItems = newGridItems;
 
-		this.idx = idx;
+		
 		mInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	}
 
@@ -40,7 +40,7 @@ public class NewGridAdapter extends BaseAdapter{
 	public int getCount() {
 		// TODO Auto-generated method stub
 		if(newGridItems != null){
-			return newGridItems.size()-2*idx; 
+			return newGridItems.size(); 
 
 		}
 		return 0;
@@ -116,7 +116,16 @@ public class NewGridAdapter extends BaseAdapter{
 				{
 					it.remove();
 
-					Log.d("removeWork", " " + removeWork.id);	
+					
+					if(newGridItems.size() == 3 && newGridItems.getLast().title != "registerBasic")
+					{
+						ImageView image = new ImageView(context);
+					    image.setImageResource(R.drawable.register_add_btn);
+			            NewGridItems newGridItem = new NewGridItems(4, "registerBasic");
+			            newGridItem.image = image;
+			            newGridItems.add(newGridItem);
+			            break;
+					}
 				}
 			}						
 
@@ -130,15 +139,15 @@ public class NewGridAdapter extends BaseAdapter{
 		
 		
 		
-		Log.d("setCatImage", idx+ " : " + pos + " : " + newGridItems.size());
+		
 			
 		
-		viewHolder.imageView.setImageDrawable(newGridItems.get((idx*2)+pos).image.getDrawable());
+		viewHolder.imageView.setImageDrawable(newGridItems.get(pos).image.getDrawable());
 		viewHolder.btnX.setVisibility(View.GONE);
 		viewHolder.btnX.setTag(newGridItems.get(pos));	
 		
 		
-		if(newGridItems.get((idx*2)+pos).title != "registerBasic"){
+		if(newGridItems.get(pos).title != "registerBasic"){
 			viewHolder.btnX.setVisibility(View.VISIBLE);
 
 		}

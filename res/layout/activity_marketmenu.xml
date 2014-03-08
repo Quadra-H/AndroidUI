@@ -50,8 +50,8 @@
         <View style="@style/profileLine" />
 
         <Button
-            android:id="@+id/btnLayout"
-            android:background="@drawable/marketmenu_layoutmarket"
+            android:id="@+id/btnLayout"            
+            android:background="@drawable/btn_selector"			   
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
           <View style="@style/itempackage" />
@@ -59,28 +59,31 @@
         <Button
             android:id="@+id/btnBackground"
             android:layout_width="wrap_content"
-             android:background="@drawable/marketmenu_backgroundmarket"
+            android:clickable="true"
+            android:background="@drawable/btn_menu_background_selector"
             android:layout_height="wrap_content"/>
          <View style="@style/itempackage" />
          
           <Button
             android:id="@+id/button2"
             android:layout_width="wrap_content"
-             android:background="@drawable/marketmenu_stickermarket"
+            android:clickable="true"
+            android:background="@drawable/btn_menu_stickermarket_selector"
             android:layout_height="wrap_content"/>
          <View style="@style/itempackage" />
          
           <Button
             android:id="@+id/button2"
             android:layout_width="wrap_content"
-             android:background="@drawable/marketmenu_framemarket"
+            android:clickable="true"
+            android:background="@drawable/btn_menu_framemarket_selector"
             android:layout_height="wrap_content"/>
          <View style="@style/itempackage" />
          
           <Button
             android:id="@+id/btnMy"
             android:layout_width="wrap_content"
-             android:background="@drawable/marketmenu_mypage"
+             android:background="@drawable/btn_menu_mypage_selector"
             android:layout_height="wrap_content"/>
          <View style="@style/itempackage" />
          

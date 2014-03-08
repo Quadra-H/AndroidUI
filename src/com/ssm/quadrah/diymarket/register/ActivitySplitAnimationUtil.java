@@ -15,6 +15,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -45,10 +46,14 @@ public class ActivitySplitAnimationUtil {
     public static void startActivity(Activity currActivity, Intent intent, int splitYCoord) {
 
         // Preparing the bitmaps that we need to show
-        prepare(currActivity, splitYCoord);
+        boolean bState = prepare(currActivity, splitYCoord);
 
-        currActivity.startActivity(intent);
-        currActivity.overridePendingTransition(0, 0);
+        if(bState){
+	        currActivity.startActivity(intent);
+	        currActivity.overridePendingTransition(0, 0);
+        }
+        else 
+        	return;
     }
 
     /**
@@ -116,6 +121,7 @@ public class ActivitySplitAnimationUtil {
                 Animator anim2 = ObjectAnimator.ofFloat(mBottomImage, "translationY", mBottomImage.getHeight());
 
                 if (interpolator != null) {
+                	SystemClock.sleep(300);
                     anim1.setInterpolator(interpolator);
                     anim2.setInterpolator(interpolator);
                 }
@@ -177,7 +183,7 @@ public class ActivitySplitAnimationUtil {
      * @param currActivity the current Activity from where we start the new one
      * @param splitYCoord  The Y coordinate where we want to split the activity. -1 will split the activity equally
      */
-    private static void prepare(Activity currActivity, int splitYCoord) {
+    private static boolean prepare(Activity currActivity, int splitYCoord) {
 
         // Get the content of the activity and put in a bitmap
         View root = currActivity.getWindow().getDecorView().findViewById(android.R.id.content);
@@ -185,6 +191,10 @@ public class ActivitySplitAnimationUtil {
         mBitmap = root.getDrawingCache();
 
         // If the split Y coordinate is -1 - We'll split the activity equally
+        if(mBitmap == null)
+        {
+        	return false;        	
+        }
         splitYCoord = (splitYCoord != -1 ? splitYCoord : mBitmap.getHeight() / 2);
 
         if (splitYCoord > mBitmap.getHeight())
@@ -193,6 +203,8 @@ public class ActivitySplitAnimationUtil {
         // Set the location to put the 2 bitmaps on the destination activity
         mLoc1 = new int[]{0, splitYCoord, root.getTop()};
         mLoc2 = new int[]{splitYCoord, mBitmap.getHeight(), root.getTop()};
+        
+        return true;
     }
 
     /**

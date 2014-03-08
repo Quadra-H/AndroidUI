@@ -123,9 +123,6 @@ public class MarketMenuLayout extends FragmentActivity {
 
 		switch(item.getItemId()){
 		case R.id.action_register :
-			
-			
-			
 			ActivitySplitAnimationUtil.startActivity(MarketMenuLayout.this, new Intent(MarketMenuLayout.this, MarketRegister.class));
 			break;		
 

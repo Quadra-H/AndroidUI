@@ -209,12 +209,13 @@ public class DesignerProfileEdit extends Activity {
 			      }
 			    };
 			    
-			    DialogInterface.OnClickListener cancelListener = new DialogInterface.OnClickListener()
+			    DialogInterface.OnClickListener removeListener = new DialogInterface.OnClickListener()
 			    {
 			      @Override
 			      public void onClick(DialogInterface dialog, int which)
 			      {
-			        dialog.dismiss();
+			    	  imageProfilePicture.setBackgroundResource(R.drawable.profile_picture);
+			    	  dialog.dismiss();
 			      }
 			    };
 			    
@@ -222,7 +223,7 @@ public class DesignerProfileEdit extends Activity {
 			    
 			    alert.setTitle("프로필 업로드할 이미지 선택") .setPositiveButton("사진촬영", cameraListener)
 			      .setNeutralButton("앨범선택", albumListener)
-			      .setNegativeButton("취소", cancelListener)
+			      .setNegativeButton("삭제", removeListener)
 			      .show();
 			}
 
@@ -248,12 +249,13 @@ public class DesignerProfileEdit extends Activity {
 		      }
 		    };
 		    
-		    DialogInterface.OnClickListener cancelCoverListener = new DialogInterface.OnClickListener()
+		    DialogInterface.OnClickListener removeCoverListener = new DialogInterface.OnClickListener()
 		    {
 		      @Override
 		      public void onClick(DialogInterface dialog, int which)
 		      {
-		        dialog.dismiss();
+		    	  imageViewCoverPicture.setBackgroundResource(R.drawable.profile_edit_top_bg);
+		    	  dialog.dismiss();
 		      }
 		    };
 		    
@@ -261,7 +263,7 @@ public class DesignerProfileEdit extends Activity {
 		    
 		    coverAlert.setTitle("커버 업로드할 이미지 선택") .setPositiveButton("사진촬영", cameraCoverListener)
 		      .setNeutralButton("앨범선택", albumCoverListener)
-		      .setNegativeButton("취소", cancelCoverListener)
+		      .setNegativeButton("삭제", removeCoverListener)
 		      .show();
 
 		

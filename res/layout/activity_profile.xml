@@ -21,10 +21,10 @@
 
             <ImageView
                 android:id="@+id/imageViewSpecial"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
                 android:scaleType="centerCrop"
-                android:src="@drawable/arrow" />
+                android:src="@drawable/profile_edit_top_bg" />
 
             <ImageView
                 android:id="@+id/imageViewProfilePicture"
@@ -76,10 +76,10 @@
             android:id="@+id/btnWorkAdd"
             android:layout_width="80dp"
             android:layout_height="40dp"
-            android:clickable="true"            
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
-            android:background="@drawable/profile_btn_add" />
+            android:background="@drawable/profile_btn_add"
+            android:clickable="true" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -87,10 +87,10 @@
             android:layout_alignBaseline="@+id/button1"
             android:layout_alignBottom="@+id/button1"
             android:layout_alignParentLeft="true"
-            android:paddingBottom="10dp"
             android:layout_margin="10dp"
-            android:layout_marginLeft="14dp"
             android:layout_marginBottom="10dp"
+            android:layout_marginLeft="14dp"
+            android:paddingBottom="10dp"
             android:text="Works"
             android:textColor="#F34022" />
     </RelativeLayout>

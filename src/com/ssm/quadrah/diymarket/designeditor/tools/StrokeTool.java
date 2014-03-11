@@ -123,3 +123,4 @@ public class StrokeTool {
 	public void drawPolygon(float mx, float my) {
 	}
 }
+

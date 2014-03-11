@@ -20,19 +20,29 @@
 	    android:id="@+id/linearLayout1"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content" >
+	    
+	    <RelativeLayout
+	        android:id="@+id/relativeLayoutBusinessCard"
+	        android:layout_width="90dp"
+	        android:layout_height="90dp"
+	        android:layout_alignParentTop="true"
+	        android:layout_marginBottom="10dp"
+	        android:layout_marginLeft="10dp"
+	        android:layout_marginTop="10dp"
+	        android:background="@drawable/list_rectangle"
+	        android:padding="10dp" >
 
 		<ImageView
 		    android:id="@+id/item_Image"
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:layout_marginLeft="10dp"		    
-		    android:layout_marginTop="10dp"
-		    android:paddingBottom="10dp"
-		    android:src="@drawable/list_rectangle" />
+		    android:layout_width="75dp"
+		    android:layout_height="75dp"		    
+		    android:layout_centerHorizontal="true"
+		    android:background="@drawable/item1"/>	
+		
+		</RelativeLayout>
 
 		<LinearLayout 
-		android:orientation="vertical" 
-		
+		android:orientation="vertical"
 		android:layout_height="wrap_content" 
 		android:layout_width="wrap_content">
 

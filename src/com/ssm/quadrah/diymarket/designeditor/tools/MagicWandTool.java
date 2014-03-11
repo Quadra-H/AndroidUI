@@ -1,5 +1,6 @@
 package com.ssm.quadrah.diymarket.designeditor.tools;
 
+
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Rect;
@@ -28,8 +29,6 @@ public class MagicWandTool {
 	private SimpleStack stack;
 	private int labelTable[][];
 	
-	private int 두개오지마;
-	
 	public MagicWandTool(SpenSurfaceView mSpenSurfaceView, SpenPageDoc mSpenPageDoc, FrameLayout mMagicWandToolSettingView, ImageView mMagicWandToolSettingSlider) {
 		spenSurfaceView = mSpenSurfaceView;
 		spenPageDoc = mSpenPageDoc;
@@ -44,8 +43,6 @@ public class MagicWandTool {
 
 		magicWandToolSettingSlider.setX(thresholdRangeStart);
 		magicWandToolSettingSlider.setY(80);
-
-		두개오지마= 0;
 	}
 
 	private final OnTouchListener magicWandToolTouchListener = new OnTouchListener() {
@@ -68,10 +65,6 @@ public class MagicWandTool {
 	};
 	
 	public void selectArea(float mx, float my) {
-		if( 두개오지마== 1)
-			return;
-		두개오지마= 1;
-		
 		int x = (int)((mx / spenSurfaceView.getZoomRatio()) + spenSurfaceView.getPan().x);
 		int y = (int)((my / spenSurfaceView.getZoomRatio()) + spenSurfaceView.getPan().y);
 
@@ -116,8 +109,6 @@ public class MagicWandTool {
 
         selectedImageBitmap.recycle();
         originImageBitmap.recycle();
-
-        두개오지마= 0;
 	}
 	
 	private Rect doGrassFire(Bitmap originImageBitmap, int startX, int startY) {
@@ -204,7 +195,7 @@ public class MagicWandTool {
 						if( curX > right )
 							right = curX;
 
-						if( curColor == 0 || curColor == 2 )
+						if( curColor == 0 || curColor == 2 || curColor == 3 )
 							labelTable[curY][curX] = 1;
 						else
 							labelTable[curY][curX] = curColor;
@@ -240,7 +231,7 @@ public class MagicWandTool {
 						if( curY < top )
 							top = curY;
 
-						if( curColor == 0 || curColor == 2 )
+						if( curColor == 0 || curColor == 2 || curColor == 3 )
 							labelTable[curY][curX] = 1;
 						else
 							labelTable[curY][curX] = curColor;
@@ -276,7 +267,7 @@ public class MagicWandTool {
 						if( curX < left )
 							left = curX;
 
-						if( curColor == 0 || curColor == 2 )
+						if( curColor == 0 || curColor == 2 || curColor == 3 )
 							labelTable[curY][curX] = 1;
 						else
 							labelTable[curY][curX] = curColor;
@@ -312,7 +303,7 @@ public class MagicWandTool {
 						if( curY > bottom )
 							bottom = curY;
 
-						if( curColor == 0 || curColor == 2 )
+						if( curColor == 0 || curColor == 2 || curColor == 3 )
 							labelTable[curY][curX] = 1;
 						else
 							labelTable[curY][curX] = curColor;
@@ -324,34 +315,39 @@ public class MagicWandTool {
 			}
 		}//end while(!queempty)
 
-		int temp;
-		for(int y = 0 ; y < height ; y++ ) {
-			for(int x = 0 ; x < width ; x++ ) {
-				temp = labelTable[y][x];
-				if( temp != 0 && temp != 2 ) {
-					originImageBitmap.setPixel(x, y, temp); 
-				}
-				else {
-					originImageBitmap.setPixel(x, y, Color.TRANSPARENT);
-				}
-			}
-		}
-
-		for(int y = 2 ; y < height - 2 ; y++ ) {
-			for(int x = 2 ; x < width - 2 ; x++ ) {
-				temp = labelTable[y][x];
-				if( temp != 0 && temp != 2 ) {
-					originImageBitmap.setPixel(x, y, temp); 
-				}
-				else {
-					originImageBitmap.setPixel(x, y, Color.TRANSPARENT);
-				}
-			}
-		}
-		
 		right++;
 		bottom++;
 		
+		int temp;
+		for(int y = top + 2 ; y < bottom - 2 ; y++ ) {
+			for(int x = left + 2 ; x < right - 2 ; x++ ) {
+				temp = 0;
+				if( labelTable[y][x - 2] == 1 ) temp++;
+				if( labelTable[y][x - 1] == 1 ) temp++;
+				if( labelTable[y][x + 1] == 1 ) temp++;
+				if( labelTable[y][x + 2] == 1 ) temp++;
+				if( labelTable[y - 2][x] == 1 ) temp++;
+				if( labelTable[y - 1][x] == 1 ) temp++;
+				if( labelTable[y + 1][x] == 1 ) temp++;
+				if( labelTable[y + 2][x] == 1 ) temp++;
+				
+				if( temp > 2 )
+					labelTable[y][x] = 3;
+			}
+		}
+
+		for(int y = top ; y < bottom ; y++ ) {
+			for(int x = left ; x < right ; x++ ) {
+				temp = labelTable[y][x];
+				if( temp != 0 && temp != 2 ) {
+					originImageBitmap.setPixel(x, y, temp); 
+				}
+				else {
+					originImageBitmap.setPixel(x, y, Color.TRANSPARENT);
+				}
+			}
+		}
+				
 		selectedAreaSize.set(left, top, right, bottom);
 		return selectedAreaSize;
 	}

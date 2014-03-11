@@ -42,10 +42,10 @@ public class NavigatorController {
 		navigatorPan = mNavigatorPan;
 		
 		//re usable object init
-    	navigatorImageBitmap = spenSurfaceView.capturePage(0.2f);
+    	navigatorImageBitmap = spenSurfaceView.capturePage( 0.2f );
     	navigatorImageWidth = navigatorImageBitmap.getWidth();
     	navigatorImageHeight = navigatorImageBitmap.getHeight();
-    	
+    	    	
 		navigatorPanBitmap = Bitmap.createBitmap(navigatorImageWidth, navigatorImageHeight, Bitmap.Config.ARGB_8888);
 		panOffscreen = new Canvas(navigatorPanBitmap);
 		panOffscreen.drawColor(Color.TRANSPARENT);
@@ -168,7 +168,7 @@ public class NavigatorController {
 		////////////////?????????????
 		spenSurfaceView.setZoomPadPosition(position);
 	    	
-		//TODO : set zoom..... getRealPoint �?참조?�자
+		//TODO : set zoom..... getRealPoint 瑜� 李몄“�븯�옄
 		//spenSurfaceView.setZoom(x, y, spenSurfaceView.getZoomRatio() - 0.001f);
 	}
 }

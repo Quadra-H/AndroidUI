@@ -3,6 +3,8 @@ package com.ssm.quadrah.diymarket.content;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +15,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -30,6 +33,7 @@ public class DetailItems extends EndlessAdapter {
 	TextView title;
 	TextView artist;
 	RatingBar rating;
+	ImageView representiveImage;
 	
 	public DetailItems(Context context, ArrayList<Items> listItems){
 		super(new ArrayAdapter<Items>(context,
@@ -151,6 +155,7 @@ public class DetailItems extends EndlessAdapter {
 			Items p = listItems.get(position);
 			
 			if(p!= null){
+				representiveImage = (ImageView)vi.findViewById(R.id.item_Image);
 				title = (TextView)vi.findViewById(R.id.title);
 				artist = (TextView)vi.findViewById(R.id.desinger);
 				rating = (RatingBar)vi.findViewById(R.id.rtbProductRating);
@@ -166,7 +171,15 @@ public class DetailItems extends EndlessAdapter {
 						return true;
 					}
 					
-				});			
+				});	
+				
+				
+				
+				
+				if(representiveImage != null)
+				{
+					//representiveImage.setImageBitmap(result);
+				}
 				
 				if(title != null){
 					title.setText(p.getTitle());

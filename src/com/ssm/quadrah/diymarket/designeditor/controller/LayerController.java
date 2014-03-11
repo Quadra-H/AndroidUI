@@ -1,142 +1,96 @@
 package com.ssm.quadrah.diymarket.designeditor.controller;
+import java.util.ArrayList;
+import java.util.Iterator;
 
+import android.util.Log;
 
-public class LayerController {/*
+import com.samsung.android.sdk.pen.document.SpenObjectBase;
+import com.samsung.android.sdk.pen.document.SpenObjectContainer;
+import com.samsung.android.sdk.pen.document.SpenPageDoc;
+import com.samsung.android.sdk.pen.engine.SpenSurfaceView;
+
+public class LayerController {
 	private SpenPageDoc spenPageDoc;
 	private SpenSurfaceView spenSurfaceView;
 	
-	private ImageView layerImageView;
-	
 	private int layerCount;
 	private int currentLayer;
-
-	private ArrayList<Bitmap> layerBitmap;
 	
-	private int maxLayer;
-
-    private Bitmap frontLayersBitmap;
-    private Bitmap behindLayersBitmap;
-    
-    private Rect dstRect;
-    private Rect srcRect;
-    
-	public LayerController(SpenSurfaceView mSpenSurfaceView, SpenPageDoc mSpenPageDoc, ImageView mLayerImageView) {
+	private ArrayList<SpenObjectBase> clGroupList;
+	
+	public LayerController(SpenSurfaceView mSpenSurfaceView, SpenPageDoc mSpenPageDoc) {
 		spenSurfaceView = mSpenSurfaceView;
 		spenPageDoc = mSpenPageDoc;
-
-        mSpenSurfaceView.setPreDrawListener(mPreDrawListener);
-        mSpenSurfaceView.setPostDrawListener(mPosteDrawListener);
-		
-		layerBitmap = new ArrayList<Bitmap>();
 		
 		layerCount = 0;
 		currentLayer = 0;
 		
-		layerImageView = mLayerImageView;
-		
-		//TODO : set maxLayer
-		maxLayer = 12;
-
-		
-		int screenSize = canvas.getWidth() > canvas.getHeight() ? canvas.getWidth() : canvas.getHeight();
-		frontLayersBitmap = Bitmap.createScaledBitmap(backgroundBitmap, screenSize, screenSize, true);
-		
-		srcRect = new Rect(0, 0, frontLayersBitmap.getWidth(), frontLayersBitmap.getHeight());
-        dstRect = new Rect(0, 0, frontLayersBitmap.getWidth(), frontLayersBitmap.getHeight());
+		clGroupList = new ArrayList<SpenObjectBase>();
 	}
 		
-	public int appendLayer() {
-		if( layerCount == maxLayer) {
-			Log.e("LayerController", "cannot append layer");
-			return -1;
-		}
-		
-		layerBitmap.add(Bitmap.createBitmap(spenSurfaceView.getWidth(), spenSurfaceView.getHeight(), Bitmap.Config.ARGB_8888));
-		maxLayer++;
-		
-		return 0;
-	}
-	
-	public int deleteLayer(int layerNum) {
-		if( maxLayer == 0 || layerNum > maxLayer ) {
-			Log.e("LayerController", "cannot delete layer");
-			return -1;
-		}
-		
-        // mSpenPageDoc.removeSelectedObject();
-        for (SpenObjectBase obj : layeredSpenObjectArrayList.get(layerNum)) {
-            spenPageDoc.removeObject(obj);
-        }
-        spenSurfaceView.closeControl();
-        spenSurfaceView.update();
-
-		layeredSpenObjectArrayList.get(layerNum).clear();
-		layeredSpenObjectArrayList.remove(layerNum);
-		
-		layerBitmap.get(layerNum).recycle();
-		layerBitmap.remove(layerNum);
-		layerCount--;
-		
-		return 0;
-	}
-	
-	public void refreshLayerMinimap() {
-    	//update screen and drawing chache
-    	spenSurfaceView.update();
-    	spenSurfaceView.updateScreen();
-    	
-    	 if( layerBitmap.size() <= currentLayer ) {
-    		layerBitmap.add(Bitmap.createBitmap(spenSurfaceView.getWidth()/5, spenSurfaceView.getHeight()/5, Bitmap.Config.ARGB_8888));
-    	}
-    	else
-    		layerBitmap.get(currentLayer).recycle();
-    	
-		//capture view
-    	layerBitmap.set(currentLayer, spenSurfaceView.capturePage(0.2f));
-    	layerImageView.setImageBitmap(layerBitmap.get(currentLayer));
+	public void appendLayer() {
+		layerCount++;
 	}
 	
 	public int setCurrentLayer(int sLayer) {
-		if( sLayer > layerCount || sLayer < 0 ) {
+		if( sLayer > layerCount ) {
+			appendLayer();
+		}		
+		else if ( sLayer < 0 ) {
 			Log.e("LayerController", "invalid layer access");
 			return -1;
 		}
 
-		refreshLayerMinimap();
-
-		spenSurfaceView.closeControl();
-    	spenSurfaceView.update();
-    	spenSurfaceView.updateScreen();
+		ArrayList<SpenObjectBase> clObjList = spenPageDoc.getObjectList();
+		Iterator<SpenObjectBase> clObjIter = clObjList.iterator();
+		SpenObjectBase spObj;
 		
-		//change current layer
+		//fill 
+		while( clObjIter.hasNext() ) {
+			spObj = clObjIter.next();
+			
+			if( spObj.getExtraDataInt("layer") == currentLayer ) {
+				spObj.setSelectable(false);
+				clGroupList.add(spObj);
+			}
+		}
+		
+        if( clGroupList.size() > 1 ) {
+			// Group the objects.
+            SpenObjectContainer objContainer;
+	        objContainer = spenPageDoc.groupObject(clGroupList, false);
+	        spenSurfaceView.closeControl();
+	        //spenPageDoc.selectObject(objContainer);
+	        objContainer.setSelectable(false);
+	        objContainer.setExtraDataInt("layer", currentLayer);
+        }
+        
+        // Ungroup other grouped objects
+        for (SpenObjectBase selectedObj : clObjList) {
+            SpenObjectContainer objContainer;
+			if( selectedObj.getExtraDataInt("layer") == sLayer ) {
+				selectedObj.setSelectable(true);
+
+	        	if (selectedObj.getType() == SpenObjectBase.TYPE_CONTAINER && selectedObj.getExtraDataInt("group") == 0 ) {
+	        		objContainer = (SpenObjectContainer) selectedObj;
+	        		objContainer.setSelectable(true);
+					for (SpenObjectBase obj : objContainer.getObjectList()) {
+						obj.setSelectable(true);
+					}
+	        		spenPageDoc.ungroupObject((SpenObjectContainer) selectedObj, false);
+	        	}
+			}
+        }
+        
+        spenSurfaceView.closeControl();
+
+        spenSurfaceView.update();
 		currentLayer = sLayer;
+		
+		clGroupList.clear();
 		
 		return sLayer;
 	}
-
-	//frontLayer Drawer
-    private final SpenDrawListener mPreDrawListener = new SpenDrawListener() {
-        @Override
-        public void onDraw(Canvas canvas, float x, float y, float ratio, float frameStartX, float frameStartY, RectF updateRect) {
-            canvas.drawColor(Color.TRANSPARENT, Mode.CLEAR);
-            
-            //set dst and draw bitmap
-            dstRect.set(left, top, right, bottom);
-            canvas.drawBitmap(behindLayersBitmap, src, dst, null);
-        }
-    };
-
-    //behindLayer Drawer
-    private final SpenDrawListener mPosteDrawListener = new SpenDrawListener() {
-        @Override
-        public void onDraw(Canvas canvas, float x, float y, float ratio, float frameStartX, float frameStartY, RectF updateRect) {
-            canvas.drawColor(Color.TRANSPARENT, Mode.CLEAR);
-
-            //set dst and draw bitmap
-            dstRect.set(left, top, right, bottom);
-            canvas.drawBitmap(behindLayersBitmap, src, dst, null);
-        }
-    };
 	
 	public int getCurrentLayer() {
 		return currentLayer;
@@ -144,5 +98,5 @@ public class LayerController {/*
 	
 	public int getLayerCount() {
 		return layerCount;
-	}*/
+	}
 }

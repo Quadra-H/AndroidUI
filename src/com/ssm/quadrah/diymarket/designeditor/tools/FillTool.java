@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -31,8 +30,6 @@ public class FillTool {
 	private SimpleStack stack;
 	private int labelTable[][];
 	
-	private int 두개오지마;
-	
 	public FillTool(SpenSurfaceView mSpenSurfaceView, SpenPageDoc mSpenPageDoc, FrameLayout mFillToolSettingView, ImageView mFillToolSettingSlider) {
 		spenSurfaceView = mSpenSurfaceView;
 		spenPageDoc = mSpenPageDoc;
@@ -50,7 +47,6 @@ public class FillTool {
 		fillToolSettingSlider.setX(thresholdRangeStart);
 		fillToolSettingSlider.setY(80);
 
-		두개오지마= 0;
 	}
 
 	private final OnTouchListener fillToolTouchListener = new OnTouchListener() {
@@ -65,7 +61,8 @@ public class FillTool {
 				x = thresholdRangeEnd;
 
 			fillToolSettingSlider.setX(x);
-			
+
+			threshold = ((int)x - thresholdRangeStart)*36/(thresholdRangeEnd - thresholdRangeStart);
 			
 			return true;
 		}
@@ -80,11 +77,6 @@ public class FillTool {
 	}
 	
 	public void fillArea(float mx, float my) {
-		if( 두개오지마== 1) {
-			Log.e("FillTool", "fill Area Locked");
-			return;
-		}
-		두개오지마= 1;
 			
 		int x = (int)((mx / spenSurfaceView.getZoomRatio()) + spenSurfaceView.getPan().x);
 		int y = (int)((my / spenSurfaceView.getZoomRatio()) + spenSurfaceView.getPan().y);
@@ -130,7 +122,6 @@ public class FillTool {
         fillImageBitmap.recycle();
         originImageBitmap.recycle();
         
-        두개오지마= 0;
 	}
 	
 	private Rect doGrassFire(Bitmap originImageBitmap, int startX, int startY) {
@@ -326,10 +317,32 @@ public class FillTool {
 		}//end while(!queempty)
 	
 		//TODO : after sharpening?
+
+		right++;
+		bottom++;
+
+		int temp;
+		for(int y = top + 2 ; y < bottom - 2 ; y++ ) {
+			for(int x = left + 2 ; x < right - 2 ; x++ ) {
+				temp = 0;
+				if( labelTable[y][x - 2] == 1 ) temp++;
+				if( labelTable[y][x - 1] == 1 ) temp++;
+				if( labelTable[y][x + 1] == 1 ) temp++;
+				if( labelTable[y][x + 2] == 1 ) temp++;
+				if( labelTable[y - 2][x] == 1 ) temp++;
+				if( labelTable[y - 1][x] == 1 ) temp++;
+				if( labelTable[y + 1][x] == 1 ) temp++;
+				if( labelTable[y + 2][x] == 1 ) temp++;
+				
+				if( temp > 2 )
+					labelTable[y][x] = 3;
+			}
+		}
 		
-		for(int y = 0 ; y < height ; y++ ) {
-			for(int x = 0 ; x < width ; x++ ) {
-				if( labelTable[y][x] == 1 ) {
+		for(int y = top ; y < bottom ; y++ ) {
+			for(int x = left ; x < right ; x++ ) {
+				temp = labelTable[y][x];
+				if( temp != 0 && temp != 2 ) {
 					originImageBitmap.setPixel(x, y, color); 
 				}
 				else {
@@ -338,20 +351,6 @@ public class FillTool {
 			}
 		}
 
-		for(int y = 2 ; y < height - 2 ; y++ ) {
-			for(int x = 2 ; x < width - 2 ; x++ ) {
-				if( (labelTable[y][x - 1] == 1 && labelTable[y][x + 1] == 1) || (labelTable[y + 1][x] == 1 && labelTable[y + 1][x] == 1) ) {
-					originImageBitmap.setPixel(x, y, color); 
-				}
-				else {
-					originImageBitmap.setPixel(x, y, Color.TRANSPARENT);
-				}
-			}
-		}
-		
-		right++;
-		bottom++;
-		
 		fillAreaSize.set(left, top, right, bottom);
 		return fillAreaSize;
 	}

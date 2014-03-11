@@ -18,21 +18,18 @@ import org.json.JSONObject;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
+
+import com.ssm.quadrah.diymarket.example.SpenProgramGuide;
 
 public class MainActivity extends Activity {
 	
@@ -74,6 +71,8 @@ public class MainActivity extends Activity {
 		Button btnMarketMenu = (Button)findViewById(R.id.btnMarketMenu);
 		btnMarketMenu.setOnClickListener(OnClickBtnMarketMenu);
 
+		Button btnTestExample = (Button)findViewById(R.id.btnTestExample);
+		btnTestExample.setOnClickListener(OnClickExample);
 
 		Button btnTest1 = (Button)findViewById(R.id.btnTest1);
 		btnTest1.setOnClickListener(OnClickBtnTest1);
@@ -81,6 +80,19 @@ public class MainActivity extends Activity {
 //		Button btnTest2 = (Button)findViewById(R.id.btnTest2);
 //		btnTest2.setOnClickListener(OnClickBtnTest2);
 	}
+	
+	View.OnClickListener OnClickExample = new View.OnClickListener() {
+
+		@Override
+		public void onClick(View arg0) {
+			// TODO Auto-generated method stub
+			Intent i = new Intent(MainActivity.this, SpenProgramGuide.class);
+			
+			startActivity(i);
+			
+		}
+	};
+	
 
 	View.OnClickListener OnClickBtnMarketMenu = new View.OnClickListener() {
 

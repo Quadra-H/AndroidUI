@@ -44,7 +44,7 @@
                   android:background="@drawable/home_btn1" />
 
               <Button
-                  android:id="@+id/btnTest2"
+                  android:id="@+id/btnTestExample"
                   android:layout_marginLeft="5dp"
                   android:background="@drawable/btn_menu_home_selector"
                   android:layout_gravity="left|top" />

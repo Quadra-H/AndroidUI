@@ -19,10 +19,12 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -42,6 +44,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.samsung.android.sdk.SsdkUnsupportedException;
@@ -67,6 +70,7 @@ import com.samsung.android.sdk.pen.engine.SpenContextMenuItemInfo;
 import com.samsung.android.sdk.pen.engine.SpenControlBase;
 import com.samsung.android.sdk.pen.engine.SpenControlList;
 import com.samsung.android.sdk.pen.engine.SpenControlListener;
+import com.samsung.android.sdk.pen.engine.SpenDrawListener;
 import com.samsung.android.sdk.pen.engine.SpenPenChangeListener;
 import com.samsung.android.sdk.pen.engine.SpenSelectionChangeListener;
 import com.samsung.android.sdk.pen.engine.SpenSurfaceView;
@@ -109,7 +113,9 @@ public class DesignEditorTool extends Activity {
     private final int MODE_IMG_OBJ = 5;
     private final int MODE_TEXT_OBJ = 6;
     private final int MODE_MAGICWAND = 7;
-    private final int MODE_SELECTION = 8;
+	private final int MODE_SELECTION = 8;
+	private final int MODE_LAYER = 9;
+	private final int MODE_SEETTIONG = 10;
     
 	private Context mContext;
 	private SpenNoteDoc mSpenNoteDoc;
@@ -144,6 +150,9 @@ public class DesignEditorTool extends Activity {
     private ImageView mSettingBtn;
     private ImageView mSaveBtn;
     private ImageView mLayerBtn;
+	private ImageView mLayerIncBtn;
+	private TextView mCurLayer;
+	private ImageView mLayerDecBtn;
 	private ImageView mUndoBtn;
 	private ImageView mRedoBtn;
 
@@ -177,6 +186,8 @@ public class DesignEditorTool extends Activity {
 	private int position = 0;
     private String saveFilePathSPD;
     private String title;
+
+	private Bitmap backgroundBitmap;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -283,12 +294,12 @@ public class DesignEditorTool extends Activity {
 	    	int dpi_width = 0;
 	    	int dpi_height = 0;
 	    	
-	    	position = retIntent.getIntExtra("position", position);
-	    	
+	    	position = retIntent.getIntExtra("position", position);	    	
 	    	title = retIntent.getStringExtra("title");	    	
 	    	dpi_width = retIntent.getIntExtra("dpi_width", dpi_width);
-	    	dpi_height = retIntent.getIntExtra("dpi_height", dpi_height);
+	    	dpi_height = retIntent.getIntExtra("dpi_height", dpi_height);	    	
 	    	saveFilePathSPD = retIntent.getStringExtra("SPD");
+	    	
 	    		    	
 	    	if( dpi_height != 0 && dpi_height != 0 ) {
 	    		mScreenRect.set(0, 0, dpi_width, dpi_height);
@@ -398,6 +409,19 @@ public class DesignEditorTool extends Activity {
 
 		mLayerBtn = (ImageView) findViewById(R.id.layerBtn);
 		mLayerBtn.setOnClickListener(mLayerBtnClickListener);
+
+		mLayerBtn = (ImageView) findViewById(R.id.layerBtn);
+		mLayerBtn.setOnClickListener(mLayerBtnClickListener);
+
+		mLayerDecBtn = (ImageView) findViewById(R.id.layerDecBtn);
+		mLayerDecBtn.setOnClickListener(mLayerDecBtnClickListener);
+
+		mCurLayer = (TextView) findViewById(R.id.curLayer);
+		mCurLayer.setOnClickListener(mCurLayerClickListener);
+		mCurLayer.setTextSize(15);
+		
+		mLayerIncBtn = (ImageView) findViewById(R.id.layerIncBtn);
+		mLayerIncBtn.setOnClickListener(mLayerIncBtnClickListener);
 		
 		mSettingBtn = (ImageView) findViewById(R.id.settingBtn);
 		mSettingBtn.setOnClickListener(mSettingBtnClickListener);
@@ -442,6 +466,7 @@ public class DesignEditorTool extends Activity {
 			Toast.makeText(mContext, "Device does not support Spen. \n You can draw stroke by finger.", Toast.LENGTH_SHORT).show();
 		}
 		
+		backgroundBitmap = ((BitmapDrawable)getResources().getDrawable(R.drawable.canvas_bg)).getBitmap();
 	}
 		
 	private void initSettingInfo() {
@@ -482,227 +507,253 @@ public class DesignEditorTool extends Activity {
         mTextSettingView.setInfo(textInfo);
 	}
 
-    private final SpenTouchListener mPenTouchListener = new SpenTouchListener() {
-        @Override
-        public boolean onTouch(View view, MotionEvent event) {
-        	//mSpenSurfaceView.update();
-        	//mSpenSurfaceView.updateScreen();
-        	
-        	//Log.e("onTouchListener", "event " + event.getX() + "  " + event.getY());
-        	//Log.e("onTouchListener", "pan   " + mSpenSurfaceView.getPan().x + "  " + mSpenSurfaceView.getPan().y);
-        	
-        	navigatorController.refreshHandle(event.getAction());
-        	
-            if (event.getAction() == MotionEvent.ACTION_UP && event.getToolType(0) == mToolType) {
-                // Check if the control is created.
-                SpenControlBase control = mSpenSurfaceView.getControl();
-                if (control == null) {
-                    // When Pen touches the display while it is in Add ObjectImage mode
-                    if (mMode == MODE_IMG_OBJ) {
-                        addImgObject(event.getX(), event.getY(), 1);
 
-                        return true;
+	private final SpenTouchListener mPenTouchListener = new SpenTouchListener() {
+		@Override
+		public boolean onTouch(View view, MotionEvent event) {
+			// mSpenSurfaceView.update();
+			// mSpenSurfaceView.updateScreen();
 
-                        // When Pen touches the display while it is in Add ObjectTextBox mode
-                    } else if (mSpenSurfaceView.getToolTypeAction(mToolType) == SpenSurfaceView.ACTION_TEXT) {
-                        SpenObjectTextBox obj = addTextObject(event.getX(), event.getY(), null);
-                        mSpenPageDoc.selectObject(obj);
-                        mSpenSurfaceView.update();
+			// Log.e("onTouchListener", "event " + event.getX() + "  " +
+			// event.getY());
+			// Log.e("onTouchListener", "pan   " + mSpenSurfaceView.getPan().x +
+			// "  " + mSpenSurfaceView.getPan().y);
 
-                        return true;
+			navigatorController.refreshHandle(event.getAction());
 
-                        // When Pen touches the display while it is in Add ObjectStroke mode
-                    } else if (mMode == MODE_STROKE_OBJ) {
-                    	strokeTool.drawLine(event.getX(), event.getY());
-                        
-                        return true;
-                    } else if (mMode == MODE_FILLTOOL) {
-                    	fillTool.fillArea(event.getX(), event.getY());
-                    	                        
-                        return true;
-                    } else if (mMode == MODE_MAGICWAND) {
-                    	magicWandTool.selectArea(event.getX(), event.getY());
-                    	                        
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-    };
-	
-    private final ObjectListener mObjectListener = new ObjectListener() {
+			if (event.getAction() == MotionEvent.ACTION_UP
+					&& event.getToolType(0) == mToolType) {
+				// Check if the control is created.
+				SpenControlBase control = mSpenSurfaceView.getControl();
+				if (control == null) {
+					// When Pen touches the display while it is in Add
+					// ObjectImage mode
+					if (mMode == MODE_IMG_OBJ) {
+						addImgObject(event.getX(), event.getY(), 1);
+
+						return true;
+
+						// When Pen touches the display while it is in Add
+						// ObjectTextBox mode
+					} else if (mSpenSurfaceView.getToolTypeAction(mToolType) == SpenSurfaceView.ACTION_TEXT) {
+						SpenObjectTextBox obj = addTextObject(event.getX(),
+								event.getY(), null);
+						mSpenPageDoc.selectObject(obj);
+						mSpenSurfaceView.update();
+
+						return true;
+
+						// When Pen touches the display while it is in Add
+						// ObjectStroke mode
+					} else if (mMode == MODE_STROKE_OBJ) {
+						strokeTool.drawLine(event.getX(), event.getY());
+
+						return true;
+					} else if (mMode == MODE_FILLTOOL) {
+						fillTool.fillArea(event.getX(), event.getY());
+
+						return true;
+					} else if (mMode == MODE_MAGICWAND) {
+						magicWandTool.selectArea(event.getX(), event.getY());
+
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+	};
+
+	private final ObjectListener mObjectListener = new ObjectListener() {
 		@Override
 		public void onObjectAdded(SpenPageDoc spenPageDoc, ArrayList<SpenObjectBase> objectList, int arg2) {
-			//set int extra data in mlayer number 
-			/*for(int i = 0 ; i < objectList.size() ; i++ ) {
-				layerController.addObject(objectList.get(i));
-			}*/
+
+			// set int extra data in mlayer number			
+			for (SpenObjectBase obj : objectList) {
+				obj.setExtraDataInt("layer", layerController.getCurrentLayer());
+				obj.setExtraDataInt("group", 0);
+			}
 		}
 
 		@Override
 		public void onObjectChanged(SpenPageDoc arg0, SpenObjectBase arg1, int arg2) {
-			//Log.e("onObjectChanged", "----------------" + (arg1.getType() == SpenObjectBase.TYPE_CONTAINER));
 		}
 
 		@Override
 		public void onObjectRemoved(SpenPageDoc spenPageDoc, ArrayList<SpenObjectBase> objectList, int arg2) {
-			//set int extra data in mlayer number 
-			/*for(int i = 0 ; i < objectList.size() ; i++ ) {
-				layerController.removeObject(objectList.get(i));
-			}*/
 		}
 	};
-    	
+
 	private final OnClickListener mCurrentToolBtnClickListener = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
+			if (isSettingViewVisible() != 64) {
+				closeSettingView();
+				return;
+			}
+
 			closeSettingView();
-			switch(mMode) {
-				case MODE_PEN:
-					mPenSettingView.setPosition(33, 128);
-					// If PenSettingView is open, close it.
-					if ( mPenSettingView.getVisibility() == View.VISIBLE ) {
-						mPenSettingView.setVisibility(View.GONE);
-						// If PenSettingView is not open, open it.
-					} else {
-						mPenSettingView.setViewMode(SpenSettingPenLayout.VIEW_MODE_EXTENSION);
-						mPenSettingView.setVisibility(View.VISIBLE);
-					}
+			switch (mMode) {
+			case MODE_PEN:
+				mPenSettingView.setPosition(33, 128);
+				// If PenSettingView is open, close it.
+				if (mPenSettingView.getVisibility() == View.VISIBLE) {
+					mPenSettingView.setVisibility(View.GONE);
+					// If PenSettingView is not open, open it.
+				} else {
+					mPenSettingView
+							.setViewMode(SpenSettingPenLayout.VIEW_MODE_EXTENSION);
+					mPenSettingView.setVisibility(View.VISIBLE);
+				}
 				break;
-				case MODE_ERASER:
-					mEraserSettingView.setPosition(33, 128);
-					// If EraserSettingView is open, close it.
-					if (mEraserSettingView.getVisibility() == View.VISIBLE ) {
-						mEraserSettingView.setVisibility(View.GONE);
-						// If EraserSettingView is not open, open it.
-					} else {
-						mEraserSettingView.setViewMode(SpenSettingEraserLayout.VIEW_MODE_NORMAL);
-						mEraserSettingView.setVisibility(View.VISIBLE);
-					}
+			case MODE_ERASER:
+				mEraserSettingView.setPosition(33, 128);
+				// If EraserSettingView is open, close it.
+				if (mEraserSettingView.getVisibility() == View.VISIBLE) {
+					mEraserSettingView.setVisibility(View.GONE);
+					// If EraserSettingView is not open, open it.
+				} else {
+					mEraserSettingView
+							.setViewMode(SpenSettingEraserLayout.VIEW_MODE_NORMAL);
+					mEraserSettingView.setVisibility(View.VISIBLE);
+				}
 				break;
-				case MODE_FILLTOOL:
-					mFillToolSettingView.setX(33);
-					mFillToolSettingView.setY(128);
-		            fillTool.setColor(mColor);
-					if (mFillToolSettingView.getVisibility() == View.VISIBLE ) {
-						mFillToolSettingView.setVisibility(View.GONE);
-					} else {
-						mFillToolSettingView.setVisibility(View.VISIBLE);
-					}
+			case MODE_FILLTOOL:
+				mFillToolSettingView.setX(33);
+				mFillToolSettingView.setY(128);
+				fillTool.setColor(mColor);
+				if (mFillToolSettingView.getVisibility() == View.VISIBLE) {
+					mFillToolSettingView.setVisibility(View.GONE);
+				} else {
+					mFillToolSettingView.setVisibility(View.VISIBLE);
+				}
 				break;
-				case MODE_OBJSEC:
-					mSelectionSettingView.setX(33);
-					mSelectionSettingView.setY(128);
-					if (mSelectionSettingView.getVisibility() == View.VISIBLE ) {
-						mSelectionSettingView.setVisibility(View.GONE);
-					} else {
-						mSelectionSettingView.setVisibility(View.VISIBLE);
-					}
+			case MODE_OBJSEC:
+				mSelectionSettingView.setX(33);
+				mSelectionSettingView.setY(128);
+				if (mSelectionSettingView.getVisibility() == View.VISIBLE) {
+					mSelectionSettingView.setVisibility(View.GONE);
+				} else {
+					mSelectionSettingView.setVisibility(View.VISIBLE);
+				}
 				break;
-				case MODE_STROKE_OBJ:
-		            strokeTool.setColor(mColor);
+			case MODE_STROKE_OBJ:
+				strokeTool.setColor(mColor);
 				break;
-				case MODE_IMG_OBJ:
-	                changeImgObj();
+			case MODE_IMG_OBJ:
+				changeImgObj();
 				break;
-				case MODE_TEXT_OBJ:
-					mTextSettingView.setPosition(33, 128);
-					if (mTextSettingView.getVisibility() == View.VISIBLE ) {
-						mTextSettingView.setVisibility(View.GONE);
-					} else {
-						mTextSettingView.setViewMode(SpenSettingEraserLayout.VIEW_MODE_NORMAL);
-						mTextSettingView.setVisibility(View.VISIBLE);
-					}
+			case MODE_TEXT_OBJ:
+				mTextSettingView.setPosition(33, 128);
+				if (mTextSettingView.getVisibility() == View.VISIBLE) {
+					mTextSettingView.setVisibility(View.GONE);
+				} else {
+					mTextSettingView
+							.setViewMode(SpenSettingEraserLayout.VIEW_MODE_NORMAL);
+					mTextSettingView.setVisibility(View.VISIBLE);
+				}
 				break;
-				case MODE_SELECTION:
-					mSelectionSettingView.setPosition(33, 128);
-					if (mSelectionSettingView.getVisibility() == View.VISIBLE ) {
-						mSelectionSettingView.setVisibility(View.GONE);
-					} else {
-						mSelectionSettingView.setViewMode(SpenSettingEraserLayout.VIEW_MODE_NORMAL);
-						mSelectionSettingView.setVisibility(View.VISIBLE);
-					}
+			case MODE_SELECTION:
+				mSelectionSettingView.setPosition(33, 128);
+				if (mSelectionSettingView.getVisibility() == View.VISIBLE) {
+					mSelectionSettingView.setVisibility(View.GONE);
+				} else {
+					mSelectionSettingView
+							.setViewMode(SpenSettingEraserLayout.VIEW_MODE_NORMAL);
+					mSelectionSettingView.setVisibility(View.VISIBLE);
+				}
 				break;
-				case MODE_MAGICWAND:
-					mMagicWandToolSettingView.setX(33);
-					mMagicWandToolSettingView.setY(128);
-					if (mMagicWandToolSettingView.getVisibility() == View.VISIBLE ) {
-						mMagicWandToolSettingView.setVisibility(View.GONE);
-					} else {
-						mMagicWandToolSettingView.setVisibility(View.VISIBLE);
-					}
+			case MODE_MAGICWAND:
+				mMagicWandToolSettingView.setX(33);
+				mMagicWandToolSettingView.setY(128);
+				if (mMagicWandToolSettingView.getVisibility() == View.VISIBLE) {
+					mMagicWandToolSettingView.setVisibility(View.GONE);
+				} else {
+					mMagicWandToolSettingView.setVisibility(View.VISIBLE);
+				}
 				break;
 			}
 		}
 	};
-	
+
 	private final OnClickListener mCurrentColorBtnClickListener = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			if( mColorSettingView.getVisibility() == View.VISIBLE ) {
+			if (mColorSettingView.getVisibility() == View.VISIBLE) {
 				closeSettingView();
 				mColorSettingView.setVisibility(View.GONE);
-			}
-			else {
+			} else {
 				closeSettingView();
 				mColorSettingView.setVisibility(View.VISIBLE);
 			}
 		}
 	};
-	
+
 	private final OnTouchListener mColorSettingViewClickListener = new OnTouchListener() {
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
 			float x, y;
-			
+
 			x = event.getX();
 			y = event.getY();
 
-			if( x < 3 ) x = 3;
-			if( y < 3 ) y = 3;
-			if( x > mColorSelectionView.getWidth() - 4 ) x = mColorSelectionView.getWidth() - 3;
-			if( y > mColorSelectionView.getHeight() - 4 ) y = mColorSelectionView.getHeight() - 3;
-			
-			//get color of image view
+			if (x < 3)
+				x = 3;
+			if (y < 3)
+				y = 3;
+			if (x > mColorSelectionView.getWidth() - 4)
+				x = mColorSelectionView.getWidth() - 3;
+			if (y > mColorSelectionView.getHeight() - 4)
+				y = mColorSelectionView.getHeight() - 3;
+
+			// get color of image view
 			mColorSelectionView.buildDrawingCache();
-			Bitmap csvbitmap = mColorSelectionView.getDrawingCache(); 
+			Bitmap csvbitmap = mColorSelectionView.getDrawingCache();
 
 			mColorSelectorView.setX(x - 28);
 			mColorSelectorView.setY(y - 28);
 
-			//get pointed pixel color
-			int pixel = csvbitmap.getPixel((int)x, (int)y);
+			// get pointed pixel color
+			int pixel = csvbitmap.getPixel((int) x, (int) y);
 
 			mColor = pixel;
-			//change current collor btn
+			// change current collor btn
 			mCurrentColorBtn.setBackgroundColor(mColor);
 
-			//if( mMode == MODE_PEN ) {
-				//set pen color
-				SpenSettingPenInfo penInfo = mPenSettingView.getInfo();
-				penInfo.color = mColor;	
-				mPenSettingView.setInfo(penInfo);
-			//}
-			//else if( mMode == MODE_FILLTOOL ) {
-				fillTool.setColor(mColor);
-			//}
-			//else if( mMode == MODE_STROKE_OBJ ) {
-				strokeTool.setColor(mColor);
-			//}
+			// if( mMode == MODE_PEN ) {
+			// set pen color
+			SpenSettingPenInfo penInfo = mPenSettingView.getInfo();
+			penInfo.color = mColor;
+			mPenSettingView.setInfo(penInfo);
+			// }
+			// else if( mMode == MODE_FILLTOOL ) {
+			fillTool.setColor(mColor);
+			// }
+			// else if( mMode == MODE_STROKE_OBJ ) {
+			strokeTool.setColor(mColor);
+			// }
 
-			//TODO : save old color
-				
+			//// TODO : save old color
+
 			return true;
 		}
 	};
 
+    private final SpenDrawListener mPreDrawListener = new SpenDrawListener() {
+        @Override
+        public void onDraw(Canvas canvas, float x, float y, float ratio, float frameStartX, float frameStartY,
+                RectF updateRect) {
+            //canvas.drawColor(Color.TRANSPARENT, Mode.CLEAR);
+            canvas.drawBitmap(backgroundBitmap, 0, 0, null);
+        }
+    };
+	
 	private final OnClickListener mPenBtnClickListener = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			mPenSettingView.setPosition((int)(mPenBtn.getX() + mPenBtn.getWidth()*2 + 8), (int)(mPenBtn.getY() + 128));
-            mCurrentColorBtn.setVisibility(View.VISIBLE);
-            mSpenSurfaceView.closeControl();
+			mPenSettingView.setPosition( (int) (mPenBtn.getX() + mPenBtn.getWidth() * 2 + 8), (int) (mPenBtn.getY() + 128));
+			mCurrentColorBtn.setVisibility(View.VISIBLE);
+			mSpenSurfaceView.closeControl();
 
 			// When Spen is in stroke (pen) mode
 			if (mSpenSurfaceView.getToolTypeAction(mToolType) == SpenSurfaceView.ACTION_STROKE) {
@@ -712,39 +763,43 @@ public class DesignEditorTool extends Activity {
 					// If PenSettingView is not open, open it.
 				} else {
 					closeSettingView();
-					mPenSettingView.setViewMode(SpenSettingPenLayout.VIEW_MODE_EXTENSION);
+					mPenSettingView
+							.setViewMode(SpenSettingPenLayout.VIEW_MODE_EXTENSION);
 					mPenSettingView.setVisibility(View.VISIBLE);
 				}
 				// If Spen is not in stroke (pen) mode, change it to stroke
 				// mode.
 			} else {
-                mMode = MODE_PEN;
+				mMode = MODE_PEN;
 				selectButton(mPenBtn);
-				mSpenSurfaceView.setToolTypeAction(mToolType, SpenSurfaceView.ACTION_STROKE);
+				mSpenSurfaceView.setToolTypeAction(mToolType,
+						SpenSurfaceView.ACTION_STROKE);
 				mCurrentToolBtn.setImageResource(R.drawable.selector_pen);
 			}
 		}
 	};
-	
+
 	private final SpenPenChangeListener mPenChangeListener = new SpenPenChangeListener() {
 		@Override
 		public void onChanged(SpenSettingPenInfo arg0) {
 			SpenSettingPenInfo penInfo = mPenSettingView.getInfo();
 			mColor = penInfo.color;
 			mCurrentColorBtn.setBackgroundColor(mColor);
-			
+
 			fillTool.setColor(mColor);
 			strokeTool.setColor(mColor);
 		}
 	};
-	
+
 	private final OnClickListener mEraserBtnClickListener = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
-            mCurrentColorBtn.setVisibility(View.GONE);
-            mSpenSurfaceView.closeControl();
+			mCurrentColorBtn.setVisibility(View.GONE);
+			mSpenSurfaceView.closeControl();
 
-            mEraserSettingView.setPosition((int)(mEraserBtn.getX() + mEraserBtn.getWidth()*2 + 8), (int)(mEraserBtn.getY() + 144));
+			mEraserSettingView.setPosition((int) (mEraserBtn.getX()
+					+ mEraserBtn.getWidth() * 2 + 8),
+					(int) (mEraserBtn.getY() + 144));
 			// When Spen is in eraser mode
 			if (mSpenSurfaceView.getToolTypeAction(mToolType) == SpenSurfaceView.ACTION_ERASER) {
 				// If EraserSettingView is open, close it.
@@ -752,7 +807,8 @@ public class DesignEditorTool extends Activity {
 					mEraserSettingView.setVisibility(View.GONE);
 					// If EraserSettingView is not open, open it.
 				} else {
-					mEraserSettingView.setViewMode(SpenSettingEraserLayout.VIEW_MODE_NORMAL);
+					mEraserSettingView
+							.setViewMode(SpenSettingEraserLayout.VIEW_MODE_NORMAL);
 					closeSettingView();
 					mEraserSettingView.setVisibility(View.VISIBLE);
 				}
@@ -760,7 +816,8 @@ public class DesignEditorTool extends Activity {
 			} else {
 				mMode = MODE_ERASER;
 				selectButton(mEraserBtn);
-				mSpenSurfaceView.setToolTypeAction(mToolType, SpenSurfaceView.ACTION_ERASER);
+				mSpenSurfaceView.setToolTypeAction(mToolType,
+						SpenSurfaceView.ACTION_ERASER);
 				mCurrentToolBtn.setImageResource(R.drawable.selector_eraser);
 			}
 		}
@@ -769,13 +826,14 @@ public class DesignEditorTool extends Activity {
 	private final OnClickListener mFillToolBtnClickListener = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			mFillToolSettingView.setX(mFillToolBtn.getX() + mFillToolBtn.getWidth()*2 + 8);
+			mFillToolSettingView.setX(mFillToolBtn.getX()
+					+ mFillToolBtn.getWidth() * 2 + 8);
 			mFillToolSettingView.setY(mFillToolBtn.getY() + 200);
-            mSpenSurfaceView.closeControl();
+			mSpenSurfaceView.closeControl();
 
-            mCurrentColorBtn.setVisibility(View.VISIBLE);
-            strokeTool.setColor(mColor);
-            
+			mCurrentColorBtn.setVisibility(View.VISIBLE);
+			strokeTool.setColor(mColor);
+
 			// When Spen is in Fill Tool mode
 			if (mMode == MODE_FILLTOOL) {
 				// If FillToolSettingView is open, close it.
@@ -786,120 +844,135 @@ public class DesignEditorTool extends Activity {
 					closeSettingView();
 					mFillToolSettingView.setVisibility(View.VISIBLE);
 				}
-				// If Spen is not in fill tool mode, change it to fill tool mode.
+				// If Spen is not in fill tool mode, change it to fill tool
+				// mode.
 			} else {
 				closeSettingView();
 				mMode = MODE_FILLTOOL;
 				selectButton(mFillToolBtn);
 				mCurrentToolBtn.setImageResource(R.drawable.selector_filltool);
-	            mSpenSurfaceView.setToolTypeAction(mToolType, SpenSurfaceView.ACTION_NONE);
+				mSpenSurfaceView.setToolTypeAction(mToolType,
+						SpenSurfaceView.ACTION_NONE);
 			}
 		}
 	};
-	
-    private final OnClickListener mStrokeObjBtnClickListener = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            mSpenSurfaceView.closeControl();
 
-            mCurrentColorBtn.setVisibility(View.VISIBLE);
-            strokeTool.setColor(mColor);
-            
+	private final OnClickListener mStrokeObjBtnClickListener = new OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			mSpenSurfaceView.closeControl();
+
+			mCurrentColorBtn.setVisibility(View.VISIBLE);
+			strokeTool.setColor(mColor);
+			strokeTool.endDraw();
+
 			closeSettingView();
-            mMode = MODE_STROKE_OBJ;
-            selectButton(mStrokeObjBtn);
+			mMode = MODE_STROKE_OBJ;
+			selectButton(mStrokeObjBtn);
 			mCurrentToolBtn.setImageResource(R.drawable.selector_gesture);
-            mSpenSurfaceView.setToolTypeAction(mToolType, SpenSurfaceView.ACTION_NONE);
-        }
-    };
-	
-    private final OnClickListener mImgObjBtnClickListener = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            mSpenSurfaceView.closeControl();
+			mSpenSurfaceView.setToolTypeAction(mToolType,
+					SpenSurfaceView.ACTION_NONE);
+		}
+	};
 
-            mCurrentColorBtn.setVisibility(View.GONE);
-            if (mMode == MODE_IMG_OBJ) {
-                closeSettingView();
-                changeImgObj();
-            } else {
-                mMode = MODE_IMG_OBJ;
-                selectButton(mImgObjBtn);
-                mSpenSurfaceView.setToolTypeAction(mToolType, SpenSurfaceView.ACTION_NONE);
-    			mCurrentToolBtn.setImageResource(R.drawable.selector_image);
-            }
-        }
-    };
+	private final OnClickListener mImgObjBtnClickListener = new OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			mSpenSurfaceView.closeControl();
+
+			mCurrentColorBtn.setVisibility(View.GONE);
+			if (mMode == MODE_IMG_OBJ) {
+				closeSettingView();
+				changeImgObj();
+			} else {
+				mMode = MODE_IMG_OBJ;
+				selectButton(mImgObjBtn);
+				mSpenSurfaceView.setToolTypeAction(mToolType,
+						SpenSurfaceView.ACTION_NONE);
+				mCurrentToolBtn.setImageResource(R.drawable.selector_image);
+			}
+		}
+	};
 
 	private final OnClickListener mTextObjBtnClickListener = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			mTextSettingView.setPosition((int)(mTextObjBtn.getX() + mTextObjBtn.getWidth()*2 + 8), (int)(mTextObjBtn.getY()));
-            
-            mCurrentColorBtn.setVisibility(View.VISIBLE);
-            strokeTool.setColor(mColor);
-            
-            mSpenSurfaceView.closeControl();
+			mTextSettingView.setPosition((int) (mTextObjBtn.getX()
+					+ mTextObjBtn.getWidth() * 2 + 8),
+					(int) (mTextObjBtn.getY()));
+
+			mCurrentColorBtn.setVisibility(View.VISIBLE);
+			strokeTool.setColor(mColor);
+
+			mSpenSurfaceView.closeControl();
 			// When Spen is in text mode
 			if (mSpenSurfaceView.getToolTypeAction(mToolType) == SpenSurfaceView.ACTION_TEXT) {
 				// If other SettingView is open, close it.
-				 if (mPenSettingView.isShown()) {
+				if (mPenSettingView.isShown()) {
 					mPenSettingView.setVisibility(View.GONE);
 				} else if (mEraserSettingView.isShown()) {
 					mEraserSettingView.setVisibility(View.GONE);
 				} else if (mTextSettingView.isShown()) {
-                    mTextSettingView.setVisibility(View.GONE);
-                } else {
-					mTextSettingView.setViewMode(SpenSettingTextLayout.VIEW_MODE_NORMAL);
-	                closeSettingView();
+					mTextSettingView.setVisibility(View.GONE);
+				} else {
+					mTextSettingView
+							.setViewMode(SpenSettingTextLayout.VIEW_MODE_NORMAL);
+					closeSettingView();
 					mTextSettingView.setVisibility(View.VISIBLE);
 				}
 			} else {
 				// If Spen is not in text mode, change it to text mode.
-                mMode = MODE_TEXT_OBJ;
+				mMode = MODE_TEXT_OBJ;
 				selectButton(mTextObjBtn);
-				mSpenSurfaceView.setToolTypeAction(mToolType, SpenSurfaceView.ACTION_TEXT);
-    			mCurrentToolBtn.setImageResource(R.drawable.selector_text);
+				mSpenSurfaceView.setToolTypeAction(mToolType,
+						SpenSurfaceView.ACTION_TEXT);
+				mCurrentToolBtn.setImageResource(R.drawable.selector_text);
 			}
 		}
 	};
 
-    private final OnClickListener mSelectionBtnClickListener = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-        	mSelectionSettingView.setPosition((int)(mSelectionBtn.getX() + mSelectionBtn.getWidth()*2 + 8), (int)(mSelectionBtn.getY() + 200));
-            mSpenSurfaceView.closeControl();
-            mCurrentColorBtn.setVisibility(View.GONE);
-            // When Spen is in selection mode
-            if (mSpenSurfaceView.getToolTypeAction(mToolType) == SpenSurfaceView.ACTION_SELECTION) {
-                // If SelectionSettingView is open, close it.
-                if (mSelectionSettingView.isShown()) {
-                    mSelectionSettingView.setVisibility(View.GONE);
-                    // If SelectionSettingView is not open, open it.
-                } else {
-                    mSelectionSettingView.setViewMode(SpenSettingSelectionLayout.VIEW_MODE_NORMAL);
-                    closeSettingView();
-                    mSelectionSettingView.setVisibility(View.VISIBLE);
-                }
-                // If Spen is not in selection mode, change it to selection mode.
-            } else {
-                mMode = MODE_SELECTION;
-                selectButton(mSelectionBtn);
-                mSpenSurfaceView.setToolTypeAction(mToolType, SpenSurfaceView.ACTION_SELECTION);
-    			mCurrentToolBtn.setImageResource(R.drawable.selector_singleselect);
-            }
-        }
-    };
+	private final OnClickListener mSelectionBtnClickListener = new OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			mSelectionSettingView.setPosition((int) (mSelectionBtn.getX()
+					+ mSelectionBtn.getWidth() * 2 + 8),
+					(int) (mSelectionBtn.getY() + 200));
+			mSpenSurfaceView.closeControl();
+			mCurrentColorBtn.setVisibility(View.GONE);
+			// When Spen is in selection mode
+			if (mSpenSurfaceView.getToolTypeAction(mToolType) == SpenSurfaceView.ACTION_SELECTION) {
+				// If SelectionSettingView is open, close it.
+				if (mSelectionSettingView.isShown()) {
+					mSelectionSettingView.setVisibility(View.GONE);
+					// If SelectionSettingView is not open, open it.
+				} else {
+					mSelectionSettingView
+							.setViewMode(SpenSettingSelectionLayout.VIEW_MODE_NORMAL);
+					closeSettingView();
+					mSelectionSettingView.setVisibility(View.VISIBLE);
+				}
+				// If Spen is not in selection mode, change it to selection
+				// mode.
+			} else {
+				mMode = MODE_SELECTION;
+				selectButton(mSelectionBtn);
+				mSpenSurfaceView.setToolTypeAction(mToolType,
+						SpenSurfaceView.ACTION_SELECTION);
+				mCurrentToolBtn
+						.setImageResource(R.drawable.selector_singleselect);
+			}
+		}
+	};
 
 	private final OnClickListener mMagicWandToolBtnClickListener = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			mMagicWandToolSettingView.setX(mMagicWandToolBtn.getX() + mMagicWandToolBtn.getWidth()*2 + 8);
+			mMagicWandToolSettingView.setX(mMagicWandToolBtn.getX() + mMagicWandToolBtn.getWidth() * 2 + 8);
 			mMagicWandToolSettingView.setY(mMagicWandToolBtn.getY() + 200);
-            mSpenSurfaceView.closeControl();
+			mSpenSurfaceView.closeControl();
 
-            mCurrentColorBtn.setVisibility(View.GONE);
-            
+			mCurrentColorBtn.setVisibility(View.GONE);
+
 			// When Spen is in Fill Tool mode
 			if (mMode == MODE_MAGICWAND) {
 				// If FillToolSettingView is open, close it.
@@ -910,51 +983,138 @@ public class DesignEditorTool extends Activity {
 					closeSettingView();
 					mMagicWandToolSettingView.setVisibility(View.VISIBLE);
 				}
-				// If Spen is not in fill tool mode, change it to fill tool mode.
+				// If Spen is not in fill tool mode, change it to fill tool
+				// mode.
 			} else {
 				closeSettingView();
 				mMode = MODE_MAGICWAND;
 				selectButton(mMagicWandToolBtn);
-				mCurrentToolBtn.setImageResource(R.drawable.selector_magic_wand);
-	            mSpenSurfaceView.setToolTypeAction(mToolType, SpenSurfaceView.ACTION_NONE);
+				mCurrentToolBtn
+						.setImageResource(R.drawable.selector_magic_wand);
+				mSpenSurfaceView.setToolTypeAction(mToolType,
+						SpenSurfaceView.ACTION_NONE);
 			}
 		}
 	};
-	
-    private final OnClickListener mLayerBtnClickListener = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-        	mLayerSettingView.setX(mLayerBtn.getX() + mLayerBtn.getWidth()*2 + 8);
-        	mLayerSettingView.setY(mLayerBtn.getY() + 200);
-            mSpenSurfaceView.closeControl();
 
-            mCurrentColorBtn.setVisibility(View.GONE);
-        	
-        	navigatorController.refreshNavigator();
-        	//layerController.refreshLayerMinimap();
-        	
-        }
-    };
+	private final OnClickListener mLayerBtnClickListener = new OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			mLayerSettingView.setX(mLayerBtn.getX() + mLayerBtn.getWidth() * 2 + 8);
+			mLayerSettingView.setY(mLayerBtn.getY() + 250);
+			mSpenSurfaceView.closeControl();
+
+			mCurrentColorBtn.setVisibility(View.GONE);
+			
+			if (mMode == MODE_LAYER) {
+				// If FillToolSettingView is open, close it.
+				if (mLayerSettingView.isShown()) {
+					mLayerSettingView.setVisibility(View.GONE);
+					// If FillToolSettingView is not open, open it.
+				} else {
+					closeSettingView();
+
+					mCurLayer.setText("" + layerController.getCurrentLayer());
+					
+					if( layerController.getCurrentLayer() == 0 )
+						mLayerDecBtn.setImageResource(R.drawable.tool_ic_left_dim);
+					else {
+						mLayerDecBtn.setImageResource(R.drawable.selector_left);
+					}
+
+					if( layerController.getCurrentLayer() == layerController.getLayerCount() )
+						mLayerIncBtn.setImageResource(R.drawable.selector_addlayer);
+					else {
+						mLayerIncBtn.setImageResource(R.drawable.selector_play);
+					}
+					
+					mLayerSettingView.setVisibility(View.VISIBLE);
+				}
+				// If Spen is not in fill tool mode, change it to fill tool
+				// mode.
+			} else {
+				closeSettingView();
+				mMode = MODE_LAYER;
+				selectButton(mLayerBtn);
+			}
+
+			navigatorController.refreshNavigator();
+		}
+	};
+
+	private final OnClickListener mLayerDecBtnClickListener = new OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			int curLayer = layerController.getCurrentLayer();
+			curLayer--;
+
+			if( layerController.setCurrentLayer(curLayer) != -1 ) {
+				mCurLayer.setText("" + (curLayer));
+			}
+
+			if( layerController.getCurrentLayer() == layerController.getLayerCount() )
+				mLayerIncBtn.setImageResource(R.drawable.selector_addlayer);
+			else {
+				mLayerIncBtn.setImageResource(R.drawable.selector_play);
+			}
+			
+			navigatorController.refreshNavigator();
+		}
+	};
+
+	private final OnClickListener mCurLayerClickListener = new OnClickListener() {
+		@Override
+		public void onClick(View v) {
+		}
+	};
+		
+	private final OnClickListener mLayerIncBtnClickListener = new OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			int curLayer = layerController.getCurrentLayer();
+			curLayer++;
+
+			layerController.setCurrentLayer(curLayer);
+			mCurLayer.setText("" + (curLayer));			
+
+			if( layerController.getCurrentLayer() == layerController.getLayerCount() )
+				mLayerIncBtn.setImageResource(R.drawable.selector_addlayer);
+			else {
+				mLayerIncBtn.setImageResource(R.drawable.selector_play);
+			}
+			
+			navigatorController.refreshNavigator();
+		}
+	};
 
 	private final OnClickListener mSettingBtnClickListener = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			closeSettingView();
-			mSettingView.setX(mSettingBtn.getX() + mSettingBtn.getWidth()*2 + 8);
+			mSettingView.setX(mSettingBtn.getX() + mSettingBtn.getWidth() * 2
+					+ 8);
 			mSettingView.setY(mSettingBtn.getY() + 250);
-			
-            mSpenSurfaceView.closeControl();
-			selectButton(mSettingBtn);
+			mSpenSurfaceView.closeControl();
+			mCurrentColorBtn.setVisibility(View.GONE);
 
-			if( mSettingView.getVisibility() == View.GONE) {
-				mSettingView.setVisibility(View.VISIBLE);
-			}
-			else {
-				mSettingView.setVisibility(View.GONE);
+			if (mMode == MODE_SEETTIONG) {
+				// If FillToolSettingView is open, close it.
+				if (mSettingView.isShown()) {
+					mSettingView.setVisibility(View.GONE);
+					// If FillToolSettingView is not open, open it.
+				} else {
+					closeSettingView();
+					mSettingView.setVisibility(View.VISIBLE);
+				}
+				// If Spen is not in fill tool mode, change it to fill tool
+				// mode.
+			} else {
+				closeSettingView();
+				mMode = MODE_SEETTIONG;
+				selectButton(mSettingBtn);
 			}
 		}
 	};
-	
+
 	private final OnClickListener undoNredoBtnClickListener = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
@@ -975,22 +1135,23 @@ public class DesignEditorTool extends Activity {
 				}
 			}
 
-        	navigatorController.refreshNavigator();
-        	//layerController.refreshLayerMinimap();
+			navigatorController.refreshNavigator();
+			
 		}
 	};
 
 	private final OnClickListener initZoomBtnClickListener = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			mSpenSurfaceView.setZoom(mSpenSurfaceView.getWidth() / 2, mSpenSurfaceView.getHeight() / 2, 1.0f);
+			mSpenSurfaceView.setZoom(mSpenSurfaceView.getWidth() / 2,
+					mSpenSurfaceView.getHeight() / 2, 1.0f);
 		}
 	};
 
 	private final OnClickListener navigatorBtnClickListener = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			if( mNavigatorView.getVisibility() == View.GONE)
+			if (mNavigatorView.getVisibility() == View.GONE)
 				mNavigatorView.setVisibility(View.VISIBLE);
 			else
 				mNavigatorView.setVisibility(View.GONE);
@@ -1000,25 +1161,25 @@ public class DesignEditorTool extends Activity {
 	private final OnClickListener toolBoxBtnClickListener = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			closeSettingView();
-
-			if( mToolBoxView.getVisibility() == View.GONE) {
+			if (mToolBoxView.getVisibility() == View.GONE) {
+				closeSettingView();
 				mToolBoxView.setVisibility(View.VISIBLE);
-			}
-			else {
+			} else {
 				mToolBoxView.setVisibility(View.GONE);
+				closeSettingView();
 			}
 		}
 	};
-	
+
 	private final OnTouchListener navigatorClickListener = new OnTouchListener() {
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
-			navigatorController.setPanPosition((int)event.getX(), (int)event.getY());
+			navigatorController.setPanPosition((int) event.getX(),
+					(int) event.getY());
 			return true;
 		}
 	};
-	
+
 	private SpenColorPickerListener mColorPickerListener = new SpenColorPickerListener() {
 		@Override
 		public void onChanged(int color, int x, int y) {
@@ -1037,13 +1198,15 @@ public class DesignEditorTool extends Activity {
 	private EventListener mEraserListener = new EventListener() {
 		@Override
 		public void onClearAll() {
-			//TODO : layer clear or all docs clear?????
 			
-			// ClearAll button action routines of EraserSettingView
-			mSpenPageDoc.removeAllObject();
+			// set int extra data in mlayer number			
+			for (SpenObjectBase obj : mSpenPageDoc.getObjectList() ) {
+				if( obj.getExtraDataInt("layer") == layerController.getCurrentLayer() )
+					mSpenPageDoc.removeObject(obj);
+			}
+			
 			mSpenSurfaceView.update();
-        	navigatorController.refreshNavigator();
-        	//layerController.refreshLayerMinimap();
+			navigatorController.refreshNavigator();
 		}
 	};
 
@@ -1067,275 +1230,330 @@ public class DesignEditorTool extends Activity {
 		}
 	};
 
-    private void changeImgObj() {
-    	callGalleryForInputImage(REQUEST_CODE_ATTACH_IMAGE);
-    }
+	private void changeImgObj() {
+		callGalleryForInputImage(REQUEST_CODE_ATTACH_IMAGE);
+	}
 
-    private void callGalleryForInputImage(int nRequestCode) {
-        // Get an image from Gallery.
-        try {
-            Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
-            galleryIntent.setType("image/*");
-            startActivityForResult(galleryIntent, nRequestCode);
-        } catch (ActivityNotFoundException e) {
-            Toast.makeText(mContext, "Cannot find gallery.", Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
-        }
-    }
+	private void callGalleryForInputImage(int nRequestCode) {
+		// Get an image from Gallery.
+		try {
+			Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
+			galleryIntent.setType("image/*");
+			startActivityForResult(galleryIntent, nRequestCode);
+		} catch (ActivityNotFoundException e) {
+			Toast.makeText(mContext, "Cannot find gallery.", Toast.LENGTH_SHORT)
+					.show();
+			e.printStackTrace();
+		}
+	}
 
-    private void addImgObject(float x, float y, float scale) {
-        SpenObjectImage imgObj = new SpenObjectImage();
-        Bitmap imageBitmap;
-        // Set a bitmap file to ObjectImage.
-        // If there is a file attached, set it to ObjectImage.
-        if (mSpenNoteDoc.hasAttachedFile(ATTACH_IMAGE_KEY)) {
-            imageBitmap = BitmapFactory.decodeFile(mSpenNoteDoc.getAttachedFile(ATTACH_IMAGE_KEY));
-            // If there is no file attached, set the launcher icon to ObjectImage.
-        } else {
-            imageBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_launcher);
-        }
-        imgObj.setImage(imageBitmap);
+	private void addImgObject(float x, float y, float scale) {
+		SpenObjectImage imgObj = new SpenObjectImage();
+		Bitmap imageBitmap;
+		// Set a bitmap file to ObjectImage.
+		// If there is a file attached, set it to ObjectImage.
+		if (mSpenNoteDoc.hasAttachedFile(ATTACH_IMAGE_KEY)) {
+			imageBitmap = BitmapFactory.decodeFile(mSpenNoteDoc
+					.getAttachedFile(ATTACH_IMAGE_KEY));
+			// If there is no file attached, set the launcher icon to
+			// ObjectImage.
+		} else {
+			imageBitmap = BitmapFactory.decodeResource(mContext.getResources(),
+					R.drawable.ic_launcher);
+		}
+		imgObj.setImage(imageBitmap);
 
-        // Set the location to insert ObjectImage and add it to PageDoc.
-        float imgWidth = imageBitmap.getWidth();
-        float imgHeight = imageBitmap.getHeight();
-        RectF rect = getRealPoint(x, y, imgWidth * scale, imgHeight * scale);
-        imgObj.setRect(rect, true);
-        mSpenPageDoc.appendObject(imgObj);
-        mSpenSurfaceView.update();
+		// Set the location to insert ObjectImage and add it to PageDoc.
+		float imgWidth = imageBitmap.getWidth();
+		float imgHeight = imageBitmap.getHeight();
+		RectF rect = getRealPoint(x, y, imgWidth * scale, imgHeight * scale);
+		imgObj.setRect(rect, true);
+		mSpenPageDoc.appendObject(imgObj);
+		mSpenSurfaceView.update();
 
-        imageBitmap.recycle();
-    }
+		imageBitmap.recycle();
+	}
 
-    private SpenObjectTextBox addTextObject(float x, float y, String str) {
-        // Set the location to insert ObjectTextBox and add it to PageDoc.
-        SpenObjectTextBox textObj = new SpenObjectTextBox();
-        RectF rect = getRealPoint(x, y, 0, 0);
-        rect.right += 350;
-        rect.bottom += 150;
-        textObj.setRect(rect, true);
-        textObj.setText(str);
-        mSpenPageDoc.appendObject(textObj);
-        mSpenSurfaceView.update();
+	private SpenObjectTextBox addTextObject(float x, float y, String str) {
+		// Set the location to insert ObjectTextBox and add it to PageDoc.
+		SpenObjectTextBox textObj = new SpenObjectTextBox();
+		RectF rect = getRealPoint(x, y, 0, 0);
+		rect.right += 350;
+		rect.bottom += 100;
+		textObj.setRect(rect, true);
+		textObj.setText(str);
+		mSpenPageDoc.appendObject(textObj);
+		mSpenSurfaceView.update();
 
-        return textObj;
-    }
+		return textObj;
+	}
 
-    private RectF getRealPoint(float x, float y, float width, float height) {
-        float panX = mSpenSurfaceView.getPan().x;
-        float panY = mSpenSurfaceView.getPan().y;
-        float zoom = mSpenSurfaceView.getZoomRatio();
-        width *= zoom;
-        height *= zoom;
-        RectF realRect = new RectF();
-        realRect.set((x - width / 2) / zoom + panX, (y - height / 2) / zoom + panY, (x + width / 2) / zoom + panX, (y + height / 2) / zoom + panY);
-        return realRect;
-    }
+	private RectF getRealPoint(float x, float y, float width, float height) {
+		float panX = mSpenSurfaceView.getPan().x;
+		float panY = mSpenSurfaceView.getPan().y;
+		float zoom = mSpenSurfaceView.getZoomRatio();
+		width *= zoom;
+		height *= zoom;
+		RectF realRect = new RectF();
+		realRect.set((x - width / 2) / zoom + panX, (y - height / 2) / zoom
+				+ panY, (x + width / 2) / zoom + panX, (y + height / 2) / zoom
+				+ panY);
+		return realRect;
+	}
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
 
-        if (resultCode == RESULT_OK) {
-            if (data == null) {
-                Toast.makeText(mContext, "Cannot find the image", Toast.LENGTH_SHORT).show();
-                return;
-            }
+		if (resultCode == RESULT_OK) {
+			if (data == null) {
+				Toast.makeText(mContext, "Cannot find the image",
+						Toast.LENGTH_SHORT).show();
+				return;
+			}
 
-            // Process a request to attach an image.
-            if (requestCode == REQUEST_CODE_ATTACH_IMAGE) {
-                // Get the image's URI and get the file path to attach it.
-                Uri imageFileUri = data.getData();
-                Cursor cursor = getContentResolver().query(Uri.parse(imageFileUri.toString()), null, null, null, null);
-                cursor.moveToNext();
-                String imagePath = cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.DATA));
+			// Process a request to attach an image.
+			if (requestCode == REQUEST_CODE_ATTACH_IMAGE) {
+				// Get the image's URI and get the file path to attach it.
+				Uri imageFileUri = data.getData();
+				Cursor cursor = getContentResolver().query(Uri.parse(imageFileUri.toString()), null, null, null, null);
+				cursor.moveToNext();
+				String imagePath = cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.DATA));
 
-                mSpenNoteDoc.attachFile(ATTACH_IMAGE_KEY, imagePath);
-            }
-        }
-    }
+				mSpenNoteDoc.attachFile(ATTACH_IMAGE_KEY, imagePath);
+			}
+		}
+	}
 
 	private void selectButton(View v) {
 		// Enable or disable the button according to the current mode.
 		mPenBtn.setSelected(false);
 		mEraserBtn.setSelected(false);
-        mFillToolBtn.setSelected(false);
-        mStrokeObjBtn.setSelected(false);
-        mImgObjBtn.setSelected(false);
-        mTextObjBtn.setSelected(false);
-        mSelectionBtn.setSelected(false);
-        mMagicWandToolBtn.setSelected(false);
-        
+		mFillToolBtn.setSelected(false);
+		mStrokeObjBtn.setSelected(false);
+		mImgObjBtn.setSelected(false);
+		mTextObjBtn.setSelected(false);
+		mSelectionBtn.setSelected(false);
+		mMagicWandToolBtn.setSelected(false);
+		mLayerBtn.setSelected(false);
+		mSettingBtn.setSelected(false);
+
 		v.setSelected(true);
 
 		closeSettingView();
 	}
 
-    SpenTextChangeListener mTextChangeListener = new SpenTextChangeListener() {
+	SpenTextChangeListener mTextChangeListener = new SpenTextChangeListener() {
 
-        @Override
-        public boolean onSelectionChanged(int arg0, int arg1) {
-            return false;
-        }
+		@Override
+		public boolean onSelectionChanged(int arg0, int arg1) {
+			return false;
+		}
 
-        @Override
-        public void onMoreButtonDown(SpenObjectTextBox arg0) {
-        }
+		@Override
+		public void onMoreButtonDown(SpenObjectTextBox arg0) {
+		}
 
-        @Override
-        public void onChanged(SpenSettingTextInfo info, int state) {
-            if (mTextSettingView != null) {
-                if (state == CONTROL_STATE_SELECTED) {
-                    mTextSettingView.setInfo(info);
-                }
-            }
-        }
+		@Override
+		public void onChanged(SpenSettingTextInfo info, int state) {
+			if (mTextSettingView != null) {
+				if (state == CONTROL_STATE_SELECTED) {
+					mTextSettingView.setInfo(info);
+				}
+			}
+		}
 
-        @Override
-        public void onFocusChanged(boolean arg0) {
+		@Override
+		public void onFocusChanged(boolean arg0) {
 
-        }
-    };
+		}
+	};
 
-    private final SpenControlListener mControlListener = new SpenControlListener() {
-        @Override
-        public void onRotationChanged(float arg0, SpenObjectBase arg1) {
-        }
+	private final SpenControlListener mControlListener = new SpenControlListener() {
+		@Override
+		public void onRotationChanged(float arg0, SpenObjectBase arg1) {
+		}
 
-        @Override
-        public void onRectChanged(RectF arg0, SpenObjectBase arg1) {
-        }
+		@Override
+		public void onRectChanged(RectF arg0, SpenObjectBase arg1) {
+		}
 
-        @Override
-        public void onObjectChanged(ArrayList<SpenObjectBase> arg0) {
-        }
+		@Override
+		public void onObjectChanged(ArrayList<SpenObjectBase> arg0) {
+		}
 
-        @Override
-        public boolean onMenuSelected(ArrayList<SpenObjectBase> objectList, int itemId) {
-            SpenObjectContainer objContainer;
-            SpenObjectBase object = objectList.get(0);
-            switch (itemId) {
-            // Remove the selected object.
-            case CONTEXT_MENU_DELETE_ID:
-                // mSpenPageDoc.removeSelectedObject();
-                for (SpenObjectBase obj : objectList) {
-                    mSpenPageDoc.removeObject(obj);
-                }
-                mSpenSurfaceView.closeControl();
-                mSpenSurfaceView.update();
-                break;
+		@Override
+		public boolean onMenuSelected(ArrayList<SpenObjectBase> objectList,
+				int itemId) {
+			SpenObjectContainer objContainer;
+			SpenObjectBase object = objectList.get(0);
+			switch (itemId) {
+			// Remove the selected object.
+			case CONTEXT_MENU_DELETE_ID:
+				// mSpenPageDoc.removeSelectedObject();
+				for (SpenObjectBase obj : objectList) {
+					mSpenPageDoc.removeObject(obj);
+				}
+				mSpenSurfaceView.closeControl();
+				mSpenSurfaceView.update();
+				break;
 
-            // Group the objects.
-            case CONTEXT_MENU_GROUP_ID:
-                objContainer = mSpenPageDoc.groupObject(objectList, false);
-                mSpenSurfaceView.closeControl();
-                mSpenPageDoc.selectObject(objContainer);
-                mSpenSurfaceView.update();
-                break;
+			// Group the objects.
+			case CONTEXT_MENU_GROUP_ID:
+				objContainer = mSpenPageDoc.groupObject(objectList, false);
+				mSpenSurfaceView.closeControl();
+				mSpenPageDoc.selectObject(objContainer);
+				objContainer.setExtraDataInt("layer", layerController.getCurrentLayer());
+				objContainer.setExtraDataInt("group", 1);
+				mSpenSurfaceView.update();
+				break;
 
-            // Ungroup the grouped objects.
-            case CONTEXT_MENU_UNGROUP_ID:
-                ArrayList<SpenObjectBase> objList = new ArrayList<SpenObjectBase>();
-                for (SpenObjectBase selectedObj : objectList) {
-                    if (selectedObj.getType() == SpenObjectBase.TYPE_CONTAINER) {
-                        objContainer = (SpenObjectContainer) selectedObj;
-                        for (SpenObjectBase obj : objContainer.getObjectList()) {
-                            objList.add(obj);
-                        }
-                        mSpenPageDoc.ungroupObject((SpenObjectContainer) selectedObj, false);
-                    }
-                }
-                mSpenSurfaceView.closeControl();
-                mSpenPageDoc.selectObject(objList);
-                mSpenSurfaceView.update();
-                break;
+			// Ungroup the grouped objects.
+			case CONTEXT_MENU_UNGROUP_ID:
+				ArrayList<SpenObjectBase> objList = new ArrayList<SpenObjectBase>();
+				for (SpenObjectBase selectedObj : objectList) {
+					if (selectedObj.getType() == SpenObjectBase.TYPE_CONTAINER) {
+						objContainer = (SpenObjectContainer) selectedObj;
+						for (SpenObjectBase obj : objContainer.getObjectList()) {
+							objList.add(obj);
+						}
+						mSpenPageDoc.ungroupObject((SpenObjectContainer) selectedObj, false);
+					}
+				}
+				mSpenSurfaceView.closeControl();
+				mSpenPageDoc.selectObject(objList);
+				mSpenSurfaceView.update();
+				break;
 
-            // Send the selected object to the back.
-            /*case CONTEXT_MENU_MOVE_TO_BOTTOM_ID:
-                mSpenPageDoc.moveObjectIndex(object, -mSpenPageDoc.getObjectIndex(object), true);
-                mSpenSurfaceView.update();
-                break;*/
+			// Send the selected object to the back.
+			/*
+			 * case CONTEXT_MENU_MOVE_TO_BOTTOM_ID:
+			 * mSpenPageDoc.moveObjectIndex(object,
+			 * -mSpenPageDoc.getObjectIndex(object), true);
+			 * mSpenSurfaceView.update(); break;
+			 */
 
-            // Send the selected object backward by an index.
-            case CONTEXT_MENU_MOVE_TO_BACKWARD_ID:
-                if (mSpenPageDoc.getObjectIndex(object) > 0) {
-                    mSpenPageDoc.moveObjectIndex(object, -1, true);
-                    mSpenSurfaceView.update();
-                }
-                break;
+			// Send the selected object backward by an index.
+			case CONTEXT_MENU_MOVE_TO_BACKWARD_ID:
+				if (mSpenPageDoc.getObjectIndex(object) > 0) {
+					mSpenPageDoc.moveObjectIndex(object, -1, true);
+					mSpenSurfaceView.update();
+				}
+				break;
 
-            // Bring the selected object forward by an index.
-            case CONTEXT_MENU_MOVE_TO_FORWARD_ID:
-                if (mSpenPageDoc.getObjectIndex(object) < mSpenPageDoc.getObjectCount(true) - 1) {
-                    mSpenPageDoc.moveObjectIndex(object, 1, true);
-                    mSpenSurfaceView.update();
-                }
-                break;
+			// Bring the selected object forward by an index.
+			case CONTEXT_MENU_MOVE_TO_FORWARD_ID:
+				if (mSpenPageDoc.getObjectIndex(object) < mSpenPageDoc
+						.getObjectCount(true) - 1) {
+					mSpenPageDoc.moveObjectIndex(object, 1, true);
+					mSpenSurfaceView.update();
+				}
+				break;
 
-            // Bring the selected object to the front.
-            /*case CONTEXT_MENU_MOVE_TO_TOP_ID:
-                mSpenPageDoc.moveObjectIndex(object, mSpenPageDoc.getObjectCount(true) - 1 - mSpenPageDoc.getObjectIndex(object), true);
-                mSpenSurfaceView.update();
-                break;*/
-            }
+			// Bring the selected object to the front.
+			/*
+			 * case CONTEXT_MENU_MOVE_TO_TOP_ID:
+			 * mSpenPageDoc.moveObjectIndex(object,
+			 * mSpenPageDoc.getObjectCount(true) - 1 -
+			 * mSpenPageDoc.getObjectIndex(object), true);
+			 * mSpenSurfaceView.update(); break;
+			 */
+			}
 
-            return true;
-        }
+			return true;
+		}
 
-        @Override
-        public boolean onCreated(ArrayList<SpenObjectBase> objectList, ArrayList<Rect> relativeRectList, ArrayList<SpenContextMenuItemInfo> menu, ArrayList<Integer> styleList, int pressType, PointF point) {
-        	// Set the Context menu
-            menu.add(new SpenContextMenuItemInfo(CONTEXT_MENU_DELETE_ID, getResources().getDrawable(R.drawable.object_delete), "Delete", true));
-            // Display Group menu when more than one object is selected.
-            if (objectList.size() > 1) {
-            	menu.add(new SpenContextMenuItemInfo(CONTEXT_MENU_GROUP_ID, getResources().getDrawable(R.drawable.object_group), "Group", true));
-            }
-            // Display Ungroup menu if the selected objects include one or more ObjectContainers.
-            for (SpenObjectBase obj : objectList) {
-                if (obj.getType() == SpenObjectBase.TYPE_CONTAINER) {
-                    menu.add(new SpenContextMenuItemInfo(CONTEXT_MENU_UNGROUP_ID, getResources().getDrawable(R.drawable.object_ungroup), "Ungroup", true));
-                    break;
-                }
-            }
-            // Display Arrange menu if only one object is selected.
-            if (objectList.size() == 1) {
-//				menu.add(new SpenContextMenuItemInfo(CONTEXT_MENU_MOVE_TO_BOTTOM_ID, mPenBtn.getDrawable(), "Bottom", true));
-                menu.add(new SpenContextMenuItemInfo(CONTEXT_MENU_MOVE_TO_BACKWARD_ID, getResources().getDrawable(R.drawable.object_move_backward), "Backward", true));
-                menu.add(new SpenContextMenuItemInfo(CONTEXT_MENU_MOVE_TO_FORWARD_ID, getResources().getDrawable(R.drawable.object_move_forward), "Forward", true));
-//				menu.add(new SpenContextMenuItemInfo(CONTEXT_MENU_MOVE_TO_TOP_ID, mPenBtn.getDrawable(), "Top", true));
-                return true;
-            }
-            // Attach an individual control for each object.
-            SpenControlList controlList = new SpenControlList(mContext, mSpenPageDoc);
-            controlList.setObject(objectList);
-            controlList.setGroup(false);
-            mSpenSurfaceView.setControl(controlList);
-            controlList.setContextMenu(menu);
+		@Override
+		public boolean onCreated(ArrayList<SpenObjectBase> objectList,
+				ArrayList<Rect> relativeRectList,
+				ArrayList<SpenContextMenuItemInfo> menu,
+				ArrayList<Integer> styleList, int pressType, PointF point) {
+			// Set the Context menu
+			menu.add(new SpenContextMenuItemInfo(CONTEXT_MENU_DELETE_ID,
+					getResources().getDrawable(R.drawable.object_delete),
+					"Delete", true));
+			// Display Group menu when more than one object is selected.
+			if (objectList.size() > 1) {
+				menu.add(new SpenContextMenuItemInfo(CONTEXT_MENU_GROUP_ID,
+						getResources().getDrawable(R.drawable.object_group),
+						"Group", true));
+			}
+			// Display Ungroup menu if the selected objects include one or more
+			// ObjectContainers.
+			for (SpenObjectBase obj : objectList) {
+				if (obj.getType() == SpenObjectBase.TYPE_CONTAINER) {
+					menu.add(new SpenContextMenuItemInfo(
+							CONTEXT_MENU_UNGROUP_ID, getResources()
+									.getDrawable(R.drawable.object_ungroup),
+							"Ungroup", true));
+					break;
+				}
+			}
+			// Display Arrange menu if only one object is selected.
+			if (objectList.size() == 1) {
+				// menu.add(new
+				// SpenContextMenuItemInfo(CONTEXT_MENU_MOVE_TO_BOTTOM_ID,
+				// mPenBtn.getDrawable(), "Bottom", true));
+				menu.add(new SpenContextMenuItemInfo(
+						CONTEXT_MENU_MOVE_TO_BACKWARD_ID, getResources()
+								.getDrawable(R.drawable.object_move_backward),
+						"Backward", true));
+				menu.add(new SpenContextMenuItemInfo(
+						CONTEXT_MENU_MOVE_TO_FORWARD_ID, getResources()
+								.getDrawable(R.drawable.object_move_forward),
+						"Forward", true));
+				// menu.add(new
+				// SpenContextMenuItemInfo(CONTEXT_MENU_MOVE_TO_TOP_ID,
+				// mPenBtn.getDrawable(), "Top", true));
+				return true;
+			}
+			// Attach an individual control for each object.
+			SpenControlList controlList = new SpenControlList(mContext,
+					mSpenPageDoc);
+			controlList.setObject(objectList);
+			controlList.setGroup(false);
+			mSpenSurfaceView.setControl(controlList);
+			controlList.setContextMenu(menu);
 
-            return false;
-        }
+			return false;
+		}
 
-        @Override
-        public boolean onClosed(ArrayList<SpenObjectBase> arg0) {
-            return false;
-        }
-    };
+		@Override
+		public boolean onClosed(ArrayList<SpenObjectBase> arg0) {
+			return false;
+		}
+	};
 
-    private final SpenSelectionChangeListener mSelectionListener = new SpenSelectionChangeListener() {
+	private final SpenSelectionChangeListener mSelectionListener = new SpenSelectionChangeListener() {
 
-        @Override
-        public void onChanged(SpenSettingSelectionInfo info) {
-            // Close Setting view if selection type is changed.
-            mSelectionSettingView.setVisibility(SpenSurfaceView.GONE);
-        }
-    };
+		@Override
+		public void onChanged(SpenSettingSelectionInfo info) {
+			// Close Setting view if selection type is changed.
+			mSelectionSettingView.setVisibility(SpenSurfaceView.GONE);
+		}
+	};
 
-    private final SpenZoomListener mZoomListener = new SpenZoomListener() {
+	private final SpenZoomListener mZoomListener = new SpenZoomListener() {
 		@Override
 		public void onZoom(float zoomPosX, float zoomPosY, float zoomRatio) {
 			navigatorController.zoomListener(zoomPosX, zoomPosY, zoomRatio);
 		}
-    };
+	};
+
+	private int isSettingViewVisible() {
+		int i;
+		i = 0;
+		i += mPenSettingView.getVisibility();
+		i += mEraserSettingView.getVisibility();
+		i += mTextSettingView.getVisibility();
+		i += mFillToolSettingView.getVisibility();
+		i += mSelectionSettingView.getVisibility();
+		i += mMagicWandToolSettingView.getVisibility();
+		i += mLayerSettingView.getVisibility();
+		i += mSettingView.getVisibility();
+
+		return i;
+	}
 
 	private void closeSettingView() {
 		// Close all the setting views.
@@ -1343,12 +1561,14 @@ public class DesignEditorTool extends Activity {
 		mEraserSettingView.setVisibility(SpenSurfaceView.GONE);
 		mTextSettingView.setVisibility(SpenSurfaceView.GONE);
 		mFillToolSettingView.setVisibility(View.GONE);
-		mMagicWandToolSettingView.setVisibility(SpenSurfaceView.GONE);
 		mSelectionSettingView.setVisibility(SpenSurfaceView.GONE);
+		mMagicWandToolSettingView.setVisibility(SpenSurfaceView.GONE);
+		mLayerSettingView.setVisibility(SpenSurfaceView.GONE);
+		mSettingView.setVisibility(SpenSurfaceView.GONE);
+
 		mColorSettingView.setVisibility(View.GONE);
 	}
 
-    
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
@@ -1371,18 +1591,18 @@ public class DesignEditorTool extends Activity {
 			mSpenSurfaceView = null;
 		}
 
-        if (mSpenNoteDoc != null) {
-            try {
-                if (isDiscard) {
-                    mSpenNoteDoc.discard();
-                } else {
-                    mSpenNoteDoc.close();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            mSpenNoteDoc = null;
-        }
+		if (mSpenNoteDoc != null) {
+			try {
+				if (isDiscard) {
+					mSpenNoteDoc.discard();
+				} else {
+					mSpenNoteDoc.close();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			mSpenNoteDoc = null;
+		}
 
 		navigatorController.releaseHandle();
 	};
@@ -1390,43 +1610,50 @@ public class DesignEditorTool extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		//getMenuInflater().inflate(R.menu.design_editor, menu);
+		// getMenuInflater().inflate(R.menu.design_editor, menu);
 		return true;
 	}
 
-    @Override
-    public void onBackPressed() {
-        if (mSpenPageDoc.getObjectCount(true) > 0 && mSpenPageDoc.isChanged()) {
-            AlertDialog.Builder dlg = new AlertDialog.Builder(mContext);
-            dlg.setIcon(mContext.getResources().getDrawable(android.R.drawable.ic_dialog_alert));
-            dlg.setTitle(mContext.getResources().getString(R.string.app_name))
-                    .setMessage("Do you want to exit after save?")
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            saveNoteFile(true);
-                            dialog.dismiss();
-                        }
-                    }).setNeutralButton("No", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                            isDiscard = true;
-                            finish();
-                        }
-                    }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    }).show();
-            dlg = null;
-        } else {
-            super.onBackPressed();
-        }
-    }
-    
-
+	@Override
+	public void onBackPressed() {
+		if (mSpenPageDoc.getObjectCount(true) > 0 && mSpenPageDoc.isChanged()) {
+			AlertDialog.Builder dlg = new AlertDialog.Builder(mContext);
+			dlg.setIcon(mContext.getResources().getDrawable(
+					android.R.drawable.ic_dialog_alert));
+			dlg.setTitle(mContext.getResources().getString(R.string.app_name))
+					.setMessage("Do you want to exit after save?")
+					.setPositiveButton("Yes",
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									saveNoteFile(true);
+									dialog.dismiss();
+								}
+							})
+					.setNeutralButton("No",
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									dialog.dismiss();
+									isDiscard = true;
+									finish();
+								}
+							})
+					.setNegativeButton("Cancel",
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									dialog.dismiss();
+								}
+							}).show();
+			dlg = null;
+		} else {
+			super.onBackPressed();
+		}
+	}
 
 	private final OnClickListener saveBtnClickListener = new OnClickListener() {
 		@Override
@@ -1497,133 +1724,127 @@ public class DesignEditorTool extends Activity {
     }
 
     private boolean saveNoteFile(String strFileName) {
-        try {
-            // Save NoteDoc
-            mSpenNoteDoc.save(strFileName);
-            Toast.makeText(mContext, "Save success to " + strFileName, Toast.LENGTH_SHORT).show();
-        } catch (IOException e) {
-            Toast.makeText(mContext, "Cannot save design file.", Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
-            return false;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-    }
+		try {
+			// Save NoteDoc
+			mSpenNoteDoc.save(strFileName);
+			Toast.makeText(mContext, "Save success to " + strFileName, Toast.LENGTH_SHORT).show();
+		} catch (IOException e) {
+			Toast.makeText(mContext, "Cannot save design file.", Toast.LENGTH_SHORT).show();
+			e.printStackTrace();
+			return false;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
 
-    private void captureSpenSurfaceView(String strFileName) {
+	private void captureSpenSurfaceView(String strFileName) {
 
-        // Capture the view
-        Bitmap imgBitmap = mSpenSurfaceView.captureCurrentView(true);
-        if (imgBitmap == null) {
-            Toast.makeText(mContext, "Capture failed." + strFileName, Toast.LENGTH_SHORT).show();
-            return;
-        }
+		// Capture the view
+		Bitmap imgBitmap = mSpenSurfaceView.capturePage(1.0f);
+		if (imgBitmap == null) {
+			Toast.makeText(mContext, "Capture failed." + strFileName, Toast.LENGTH_SHORT).show();
+			return;
+		}
 
-        OutputStream out = null;
-        try {
-            // Create FileOutputStream and save the captured image.
-            out = new FileOutputStream(strFileName);
-            imgBitmap.compress(CompressFormat.PNG, 100, out);
-            // Save the note information.
-            mSpenNoteDoc.save(out);
-            out.close();
-            Toast.makeText(mContext, "Captured images were stored in the file" + strFileName, Toast.LENGTH_SHORT)
-                    .show();
-        } catch (IOException e) {
-            File tmpFile = new File(strFileName);
-            if (tmpFile.exists()) {
-                tmpFile.delete();
-            }
-            Toast.makeText(mContext, "Failed to save the file.", Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
-        } catch (Exception e) {
-            File tmpFile = new File(strFileName);
-            if (tmpFile.exists()) {
-                tmpFile.delete();
-            }
-            Toast.makeText(mContext, "Failed to save the file.", Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
-        }
-        imgBitmap.recycle();
-    }
+		OutputStream out = null;
+		try {
+			// Create FileOutputStream and save the captured image.
+			out = new FileOutputStream(strFileName);
+			imgBitmap.compress(CompressFormat.PNG, 100, out);
+			// Save the note information.
+			mSpenNoteDoc.save(out);
+			out.close();
+			Toast.makeText(mContext, "Captured images were stored in the file" + strFileName, Toast.LENGTH_SHORT).show();
+		} catch (IOException e) {
+			File tmpFile = new File(strFileName);
+			if (tmpFile.exists()) {
+				tmpFile.delete();
+			}
+			Toast.makeText(mContext, "Failed to save the file.", Toast.LENGTH_SHORT).show();
+			e.printStackTrace();
+		} catch (Exception e) {
+			File tmpFile = new File(strFileName);
+			if (tmpFile.exists()) {
+				tmpFile.delete();
+			}
+			Toast.makeText(mContext, "Failed to save the file.", Toast.LENGTH_SHORT).show();
+			e.printStackTrace();
+		}
+		imgBitmap.recycle();
+	}
 
-    private void loadNoteFile() {
-        // Load the file list.
-        final String fileList[] = setFileList();
-        if (fileList == null) {
-            return;
-        }
+	private void loadNoteFile() {
+		// Load the file list.
+		final String fileList[] = setFileList();
+		if (fileList == null) {
+			return;
+		}
 
-        //TODO : Load File from static positioni
-        
-        // Prompt Load File dialog.
-        new AlertDialog.Builder(mContext).setTitle("Select file")
-                .setItems(fileList, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String strFilePath = staticFilePath.getPath() + '/' + fileList[which];
+		// Prompt Load File dialog.
+		new AlertDialog.Builder(mContext).setTitle("Select file").setItems(fileList, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						String strFilePath = staticFilePath.getPath() + '/' + fileList[which];
 
-                        try {
-                            // Create NoteDoc with the selected file.
-                            SpenNoteDoc tmpSpenNoteDoc = new SpenNoteDoc(mContext, strFilePath, mScreenRect.width(),
-                                    SpenNoteDoc.MODE_WRITABLE);
-                            mSpenNoteDoc.close();
-                            mSpenNoteDoc = tmpSpenNoteDoc;
-                            if (mSpenNoteDoc.getPageCount() == 0) {
-                                mSpenPageDoc = mSpenNoteDoc.appendPage();
-                            } else {
-                                mSpenPageDoc = mSpenNoteDoc.getPage(mSpenNoteDoc.getLastEditedPageIndex());
-                            }
-                            mSpenSurfaceView.setPageDoc(mSpenPageDoc, true);
-                            mSpenSurfaceView.update();
-                            Toast.makeText(mContext, "Successfully loaded noteFile.", Toast.LENGTH_SHORT).show();
-                        } catch (IOException e) {
-                            Toast.makeText(mContext, "Cannot open this file.", Toast.LENGTH_LONG).show();
-                        } catch (SpenUnsupportedTypeException e) {
-                            Toast.makeText(mContext, "This file is not supported.", Toast.LENGTH_LONG).show();
-                        } catch (SpenInvalidPasswordException e) {
-                            Toast.makeText(mContext, "This file is locked by a password.", Toast.LENGTH_LONG).show();
-                        } catch (SpenUnsupportedVersionException e) {
-                            Toast.makeText(mContext, "This file is the version that does not support.",
-                                    Toast.LENGTH_LONG).show();
-                        } catch (Exception e) {
-                            Toast.makeText(mContext, "Failed to load noteDoc.", Toast.LENGTH_LONG).show();
-                        }
-                    }
-                }).show();
-    }
+						try {
+							// Create NoteDoc with the selected file.
+							SpenNoteDoc tmpSpenNoteDoc = new SpenNoteDoc(mContext, strFilePath, mScreenRect.width(), SpenNoteDoc.MODE_WRITABLE);
+							mSpenNoteDoc.close();
+							mSpenNoteDoc = tmpSpenNoteDoc;
+							if (mSpenNoteDoc.getPageCount() == 0) {
+								mSpenPageDoc = mSpenNoteDoc.appendPage();
+							} else {
+								mSpenPageDoc = mSpenNoteDoc.getPage(mSpenNoteDoc.getLastEditedPageIndex());
+							}
+							mSpenSurfaceView.setPageDoc(mSpenPageDoc, true);
+							mSpenSurfaceView.update();
+							Toast.makeText(mContext, "Successfully loaded noteFile.", Toast.LENGTH_SHORT).show();
+						} catch (IOException e) {
+							Toast.makeText(mContext, "Cannot open this file.", Toast.LENGTH_LONG).show();
+						} catch (SpenUnsupportedTypeException e) {
+							Toast.makeText(mContext, "This file is not supported.", Toast.LENGTH_LONG).show();
+						} catch (SpenInvalidPasswordException e) {
+							Toast.makeText(mContext, "This file is locked by a password.", Toast.LENGTH_LONG).show();
+						} catch (SpenUnsupportedVersionException e) {
+							Toast.makeText( mContext, "This file is the version that does not support.", Toast.LENGTH_LONG).show();
+						} catch (Exception e) {
+							Toast.makeText(mContext, "Failed to load noteDoc.", Toast.LENGTH_LONG).show();
+						}
+					}
+				}).show();
+	}
 
-    private String[] setFileList() {
-        // Call the file list under the directory in mFilePath.
-        if (!staticFilePath.exists()) {
-            if (!staticFilePath.mkdirs()) {
-                Toast.makeText(mContext, "Save Path Creation Error", Toast.LENGTH_SHORT).show();
-                return null;
-            }
-        }
-        // Filter in spd and png files.
-        File[] fileList = staticFilePath.listFiles(new txtFileFilter());
-        if (fileList == null) {
-            Toast.makeText(mContext, "File does not exist.", Toast.LENGTH_SHORT).show();
-            return null;
-        }
+	private String[] setFileList() {
+		// Call the file list under the directory in mFilePath.
+		if (!staticFilePath.exists()) {
+			if (!staticFilePath.mkdirs()) {
+				Toast.makeText(mContext, "Save Path Creation Error", Toast.LENGTH_SHORT).show();
+				return null;
+			}
+		}
+		// Filter in spd and png files.
+		File[] fileList = staticFilePath.listFiles(new txtFileFilter());
+		if (fileList == null) {
+			Toast.makeText(mContext, "File does not exist.", Toast.LENGTH_SHORT).show();
+			return null;
+		}
 
-        int i = 0;
-        String[] strFileList = new String[fileList.length];
-        for (File file : fileList) {
-            strFileList[i++] = file.getName();
-        }
+		int i = 0;
+		String[] strFileList = new String[fileList.length];
+		for (File file : fileList) {
+			strFileList[i++] = file.getName();
+		}
 
-        return strFileList;
-    }
+		return strFileList;
+	}
 
-    class txtFileFilter implements FilenameFilter {
-        @Override
-        public boolean accept(File dir, String name) {
-            return (name.endsWith(".spd") || name.endsWith(".png"));
-        }
-    }
+	class txtFileFilter implements FilenameFilter {
+		@Override
+		public boolean accept(File dir, String name) {
+			return (name.endsWith(".spd") || name.endsWith(".png"));
+		}
+	}
 
 }

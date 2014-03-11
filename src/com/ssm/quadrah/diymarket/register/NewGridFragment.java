@@ -133,6 +133,8 @@ public class NewGridFragment extends Fragment{
 						intent.putExtra("title", newGridItems.get(position).title);
 						intent.putExtra("dpi_width", newGridItems.get(position).width);
 						intent.putExtra("dpi_height", newGridItems.get(position).height);
+						intent.putExtra("SPD", newGridItems.get(position).saveFilePathSPD);
+						
 						
 						
 						Log.d("saveFilePathSPD", newGridItems.get(position).saveFilePathSPD); 
@@ -172,36 +174,43 @@ public class NewGridFragment extends Fragment{
 				        		switch(position)
 				        		{
 				        		case IMAGE_DPI_1280_800:	
-				        			dpi_width = 1280;
-				        			dpi_height = 800;
+				        			dpi_width = 800;
+				        			dpi_height = 1280;
+				        			intent.putExtra("dpi_width", dpi_width);
+					        	    intent.putExtra("dpi_height", dpi_height);
 				        			break;
 				        		case IMAGE_DPI_1920_1200:
-				        			dpi_width = 1920;
-				        			dpi_height = 1200;   		
+				        			dpi_width = 1200;
+				        			dpi_height = 1920;   	
+				        			intent.putExtra("dpi_width", dpi_width);
+					        	    intent.putExtra("dpi_height", dpi_height);
 				        			break;
 				        		case IMAGE_DPI_1280_720:
-				        			dpi_width = 1280;
-				        			dpi_height = 720;     				        			
+				        			dpi_width = 720;
+				        			dpi_height = 1280;   
+				        			intent.putExtra("dpi_width", dpi_width);
+					        	    intent.putExtra("dpi_height", dpi_height);
 				        			break;
 				        		case IMAGE_DPI_1920_1080:
-				        			dpi_width = 1920;
-				        			dpi_height = 1080;	
+				        			dpi_width = 1080;
+				        			dpi_height = 1920;	
+				        			intent.putExtra("dpi_width", dpi_width);
+					        	    intent.putExtra("dpi_height", dpi_height);
 				        			break;
 				        		}
 				        		
 				        		
 				        		intent.putExtra("position", staticPosition);
-				        		intent.putExtra("dpi_width", newGridItems.get(staticPosition).width);
-				        	    intent.putExtra("dpi_height", newGridItems.get(staticPosition).height);
+				        		
 				        	    
 				        	    newGridItems.get(staticPosition).width = dpi_width;
 				        	    newGridItems.get(staticPosition).height = dpi_height;
-					        	newGridItems.get(staticPosition).strType = MarketRegister.strType;
+				        	    newGridItems.get(staticPosition).strType = MarketRegister.strType;
 					        	newGridItems.get(staticPosition).saveFilePathPNG += newGridItems.get(staticPosition).strType.toString();
 					        	
 					        	Log.d("saveFilePathPNG", newGridItems.get(staticPosition).saveFilePathPNG); 
 					        	
-					        	intent.putExtra("strType", newGridItems.get(staticPosition).strType);
+					        	//intent.putExtra("strType", newGridItems.get(staticPosition).strType);
 					        	
 					        	startActivityForResult(intent, IMAGE_REQUSET); 	
 				        		mPopupDlg.dismiss();

@@ -32,6 +32,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -53,6 +54,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ssm.quadrah.diymarket.Constants;
 import com.ssm.quadrah.diymarket.DesignerAccount;
@@ -83,7 +85,7 @@ public class MarketRegister extends FragmentActivity {
     private ImageView representiveImageView;
     private String saveFilePathPNG;
     private String saveFilePathSPD;
-    private String title;
+    private String representiveTitle;
     private int dpi_width;
     private int dpi_height;
     
@@ -187,9 +189,37 @@ public class MarketRegister extends FragmentActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if(item.getItemId() == R.id.action_register_edit)
 		{
-			//서버에 전송할 부분
+			Drawable temp = representiveImageView.getDrawable();
+			Drawable temp1 = getResources().getDrawable(R.drawable.register_add_btn);
+
+			Bitmap tmpBitmap = ((BitmapDrawable)temp).getBitmap();
+			Bitmap tmpBitmap1 = ((BitmapDrawable)temp1).getBitmap();
+			
+			if(txtWorkTitle.toString().equals(""))
+			{
+				Toast.makeText(MarketRegister.this, "제목을 입력하세요.", Toast.LENGTH_LONG).show();
+				return false;
+			}
+			else if(tmpBitmap.equals(tmpBitmap1) )
+			{
+				Toast.makeText(MarketRegister.this, "대표 이미지를 그려주세요.", Toast.LENGTH_LONG).show();
+				return false;
+			}
+			else if(newGridItems.get(position).title == "registerBasic")
+			{
+				Toast.makeText(MarketRegister.this, "한 개 이상의 그림을 그려주세요.", Toast.LENGTH_LONG).show();
+				return false;
+			}
+			else 
+			{
+				finish();
+			}
+		}
+		else if(item.getItemId() == android.R.id.home)
+		{
 			finish();
 		}
+//		finish();
 		return super.onOptionsItemSelected(item);
 	}
 	
@@ -540,7 +570,7 @@ public class MarketRegister extends FragmentActivity {
 			{		
 				Intent i = new Intent(MarketRegister.this, DesignEditorTool.class);
 				
-				i.putExtra("title", title);
+				i.putExtra("title", representiveTitle);
         		i.putExtra("dpi_width", dpi_width);
         	    i.putExtra("dpi_height", dpi_height);
         	    i.putExtra("SPD", saveFilePathSPD);
@@ -615,13 +645,6 @@ public class MarketRegister extends FragmentActivity {
 				
 				 
 			}
-			
-			  
-			
-			
-			
-			
-			
 		}
 	};
 	
@@ -646,7 +669,7 @@ public class MarketRegister extends FragmentActivity {
 			{				
 				saveFilePathPNG = data.getStringExtra("PNG");
 				saveFilePathSPD = data.getStringExtra("SPD");				
-				title = data.getStringExtra("title");
+				representiveTitle = data.getStringExtra("title");
 				dpi_width = data.getIntExtra("dpi_width", 0);
 				dpi_height = data.getIntExtra("dpi_height", 0);
 				

@@ -3,10 +3,13 @@
         android:id="@+id/action_register"
         android:orderInCategory="100"
         android:showAsAction="always"
-        android:icon="@drawable/list_btn_add"/>
+        android:icon="@drawable/ic_action_edit"/>
+    
+    <!-- Spinner 주석처리 
     <item
         android:id="@+id/action_tag"
         android:actionViewClass="android.widget.Spinner"
         android:visible="true"
         android:showAsAction="always"/>
+         -->
 </menu>

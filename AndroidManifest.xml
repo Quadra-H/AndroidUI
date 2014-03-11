@@ -21,6 +21,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
         android:allowBackup="true"
@@ -42,13 +43,14 @@
             android:parentActivityName="com.ssm.quadrah.diymarket.MainActivity"
             android:label="@string/app_name" />
         <activity android:name="com.ssm.quadrah.diymarket.content.MarketMenuLayout"
-            android:icon="@drawable/arrow"
-            android:label="@string/hello_world"
+            android:icon="@drawable/btn_home"            
             android:parentActivityName="MarketMenu"></activity>
         <activity
             android:name="com.ssm.quadrah.diymarket.register.MarketRegister"
+            android:icon="@drawable/ic_action_previous_item"
             android:theme="@style/Theme.CustomRegisterStyle" />
         <activity android:name="com.ssm.quadrah.diymarket.profile.DesignerProfile"
+            android:icon="@drawable/btn_home"
             android:parentActivityName="MarketMenu"></activity>
         <activity
             android:name="com.ssm.quadrah.diymarket.content.ItemsPackage"
@@ -58,7 +60,8 @@
             android:label="Selected Image"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
         </activity>
-        <activity android:name="com.ssm.quadrah.diymarket.profile.DesignerProfileEdit"
+        <activity android:name="com.ssm.quadrah.diymarket.profile.DesignerProfileEdit"   
+                     
             android:parentActivityName="com.ssm.quadrah.diymarket.profile.DesignerProfile"></activity>
         <activity
             android:name="com.ssm.quadrah.diymarket.profile.DesignerProfileName"
@@ -67,6 +70,8 @@
             android:name="com.ssm.quadrah.diymarket.profile.DesignerProfileState"
             android:windowSoftInputMode="stateVisible" />
         <activity android:name="com.ssm.quadrah.diymarket.register.EditTool" />
+        
+        
 
         <service android:name=".GCMIntentService" />
 
@@ -88,6 +93,8 @@
         <activity
             android:name=".RegisterActivity"
             android:launchMode="singleTop" />
+        <activity android:name=".designeditor.DesignEditorTool"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen"></activity>
     </application>
 
 </manifest>

@@ -8,7 +8,15 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.graphics.Bitmap.Config;
+import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -71,7 +79,9 @@ public class DesignerProfile extends Activity {
 	    tvName = (TextView)findViewById(R.id.textViewProfileName);
 	    tvState = (TextView)findViewById(R.id.textViewState);
 	    
-	   
+	    // 여기에 profile picture 라운딩 처리해주는거 넣어야함.
+	    // getRoundedCornerBitmap(bitmap);
+	    
 	    Bundle getUserID = getIntent().getExtras();
 	    type = getIntent().getIntExtra("type", type);
 	    
@@ -125,6 +135,7 @@ public class DesignerProfile extends Activity {
 				    if(!strID.equals(strCompareID))
 				    {
 				    	Intent i = new Intent(DesignerProfile.this, ItemsPackage.class);
+				    	i.putExtra("Account", strID);
 						startActivity(i);
 						overridePendingTransition(R.anim.slide_in_up, R.anim.stay);
 				    	
@@ -146,6 +157,28 @@ public class DesignerProfile extends Activity {
         listView.setAdapter(detailItem_adapter);
 
 	}
+	
+	public static Bitmap getRoundedCornerBitmap(Bitmap bitmap) {
+	    Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
+	        bitmap.getHeight(), Config.ARGB_8888);
+	    Canvas canvas = new Canvas(output);
+	 
+	    final int color = 0xff424242;
+	    final Paint paint = new Paint();
+	    final Rect rect = new Rect(0, 0, bitmap.getWidth()-1, bitmap.getHeight()-1);
+	    final RectF rectF = new RectF(rect);
+	    final float roundPx = 20;
+	 
+	    paint.setAntiAlias(true);
+	    canvas.drawARGB(0, 0, 0, 0);
+	    paint.setColor(color);
+	    canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+	 
+	    paint.setXfermode(new PorterDuffXfermode(Mode.SRC_IN));
+	    canvas.drawBitmap(bitmap, rect, rect, paint);
+	 
+	    return output;
+	  }
 	
 	DialogInterface mPopupDlg = null;
 	

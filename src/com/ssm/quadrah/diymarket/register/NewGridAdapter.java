@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
 
 import com.ssm.quadrah.diymarket.R;
 
@@ -99,37 +102,68 @@ public class NewGridAdapter extends BaseAdapter{
 
 		return view;
 	}
+	
+	
+	
 
 	View.OnClickListener OnClickRemove = new View.OnClickListener() {
 
 		@Override
-		public void onClick(View v) {
+		public void onClick(final View v) {
 			// TODO Auto-generated method stub
-			NewGridItems removeItem = (NewGridItems)v.getTag();
+			
+			AlertDialog.Builder dlg = new AlertDialog.Builder(context);
+            dlg.setIcon(context.getResources().getDrawable(android.R.drawable.ic_dialog_alert));
+            dlg.setTitle(context.getResources().getString(R.string.app_name))
+                    .setMessage("삭제하시겠습니까?")
+                    .setPositiveButton("예", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            
+                        	NewGridItems removeItem = (NewGridItems)v.getTag();
 
-			Log.d("removeItem", "remove : " + removeItem.id );
-			for(Iterator<NewGridItems> it = newGridItems.iterator(); it.hasNext();)
-			{
-				NewGridItems removeWork = it.next();
+                			Log.d("removeItem", "remove : " + removeItem.id );
+                			for(Iterator<NewGridItems> it = newGridItems.iterator(); it.hasNext();)
+                			{
+                				NewGridItems removeWork = it.next();
 
-				if(removeWork.id == removeItem.id && removeWork.title == removeItem.title && removeWork.title != "registerBasic")
-				{
-					it.remove();
+                				if(removeWork.id == removeItem.id && removeWork.title == removeItem.title && removeWork.title != "registerBasic")
+                				{
+                					it.remove();
 
-					
-					if(newGridItems.size() == 3 && newGridItems.getLast().title != "registerBasic")
-					{
-						ImageView image = new ImageView(context);
-					    image.setImageResource(R.drawable.register_add_btn);
-			            NewGridItems newGridItem = new NewGridItems(4, "registerBasic");
-			            newGridItem.image = image;
-			            newGridItems.add(newGridItem);
-			            break;
-					}
-				}
-			}						
+                					
+                					if(newGridItems.size() == 11 && newGridItems.getLast().title != "registerBasic")
+                					{
+                						ImageView image = new ImageView(context);
+                					    image.setImageResource(R.drawable.register_add_btn);
+                			            NewGridItems newGridItem = new NewGridItems(12, "registerBasic");
+                			            newGridItem.image = image;
+                			            newGridItems.add(newGridItem);
+                			            break;
+                					}
+                				}
+                			}						
 
-			notifyDataSetChanged();
+                			notifyDataSetChanged();
+                			
+                            dialog.dismiss();
+                        }
+                    }).setNeutralButton("아니오", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            
+                            
+                        }
+                    }).setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    }).show();
+            dlg = null;
+            
+			
 		}
 	};
 
@@ -137,12 +171,8 @@ public class NewGridAdapter extends BaseAdapter{
 
 	public void setCatImage(int pos, ViewHolder viewHolder) {	
 		
-		
-		
-		
-			
-		
 		viewHolder.imageView.setImageDrawable(newGridItems.get(pos).image.getDrawable());
+		viewHolder.imageView.setAdjustViewBounds(true);
 		viewHolder.btnX.setVisibility(View.GONE);
 		viewHolder.btnX.setTag(newGridItems.get(pos));	
 		

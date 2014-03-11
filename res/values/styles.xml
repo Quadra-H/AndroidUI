@@ -14,11 +14,13 @@
     
     <!-- ActionBar Theme : textColor : white  -->
   <style name="MyTheme" parent="@android:style/Theme.Holo.Light">
-    <item name="android:actionBarStyle">@style/MyTheme.ActionBarStyle</item>
+    <item name="android:actionBarStyle">@style/MyTheme.ActionBarStyle</item>   
+    
   </style>
 
   <style name="MyTheme.ActionBarStyle" parent="@android:style/Widget.Holo.Light.ActionBar">
-    <item name="android:titleTextStyle">@style/MyTheme.ActionBar.TitleTextStyle</item>  
+    <item name="android:titleTextStyle">@style/MyTheme.ActionBar.TitleTextStyle</item>
+    
   </style>  
 
   <style name="MyTheme.ActionBar.TitleTextStyle" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
@@ -98,6 +100,14 @@
         <item name="android:maxHeight">22dip</item>
     </style>
     
+    
+    <style name="RatingBarStyle" parent="@android:style/Widget.RatingBar">
+        <item name="android:progressDrawable">@drawable/bigratingstars</item>
+        <item name="android:minHeight">22dip</item>
+        <item name="android:maxHeight">22dip</item>
+    </style>
+     
+     
      <!-- Translucent slide_in_up Activity -->
     <style name="LayoutAnimation">
         <item name="android:windowEnterAnimation">@anim/slide_in_up</item>
@@ -153,21 +163,12 @@
 	
    	
 	
+   	
+	
    	<!--  -->
    	
-   	<style name="Layout.Settings">
-		<item name="android:paddingLeft">@dimen/grid2</item>
-		<item name="android:paddingRight">@dimen/grid2</item>
-		<item name="android:paddingTop">@dimen/grid2</item>
-		<item name="android:background">@color/white</item>
-	</style>   
-   		<style name="TextView.SettingHeader">
-		<item name="android:textSize">14sp</item>
-		<item name="android:layout_marginBottom">@dimen/grid0</item>
-		<item name="android:layout_marginLeft">@dimen/grid1</item>		
-		<item name="android:textStyle">bold</item>
-	</style>
-	
+   	
+   	
 	<style name="GrayLine">
 		<item name="android:layout_width">match_parent</item>
 		<item name="android:layout_height">1px</item>
@@ -178,13 +179,7 @@
 		<item name="android:layout_height">2dp</item>
 	</style>
 	
-		<style name="Layout.SettingsItem">
-		<item name="android:paddingLeft">@dimen/grid1</item>
-		<item name="android:paddingRight">@dimen/grid1</item>
-		<item name="android:paddingTop">@dimen/grid2</item>
-		<item name="android:paddingBottom">@dimen/grid2</item>
-		<item name="android:background">?android:attr/selectableItemBackground</item>
-	</style>
+		
 	
 	<style name="TextView.SettingTitle">
 		<item name="android:textSize">18sp</item>

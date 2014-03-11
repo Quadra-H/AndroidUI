@@ -6,7 +6,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="170dp"
+        android:layout_height="120dp"
         android:orientation="vertical" >
 
         <Button
@@ -14,7 +14,7 @@
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:layout_gravity="center_horizontal"            
-            android:layout_marginTop="130dp"
+            android:layout_marginTop="80dp"
             android:background="@drawable/popup_x" />
         
         <View 
@@ -31,95 +31,108 @@
         
     </LinearLayout>
         
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="140dp"
-        android:background="@drawable/popup_white_bg" >
-
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/popup_top_bg"
             android:orientation="vertical" >
 
-            <TextView
-                android:id="@+id/TextView01"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"      
-                android:layout_marginLeft="10dp"          
-                android:text="Image title 01"
-                android:textColor="@android:color/black"
-                android:textSize="15dp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/txtDesignerID"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"  
-                android:text="Designer"                
-                android:textSize="15dp"
-                android:textStyle="bold" />
-            
-            <RatingBar
-              android:id="@+id/rtbProductRating"
-		      android:layout_height="wrap_content"
-		      android:layout_width="wrap_content"
-		      android:layout_marginLeft="10dp"
-		      android:numStars="5"
-		      android:rating="3.5"
-		      android:isIndicator="false"
-		      style="@style/foodRatingBar">
-            </RatingBar>
-            
-             <TextView
-                android:id="@+id/txt_dia"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"  
-                android:text="Free"
-                android:textColor="@android:color/black"
-                android:textSize="15dp"
-                android:layout_marginBottom="5dp"
-                android:textStyle="bold" />
-            
-
-            <View 
-                android:layout_marginBottom="5dp"
-                style="@style/itempackage" />
-            
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"   
-                android:weightSum="100"             
-                android:orientation="horizontal" >
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.30"
+                android:orientation="vertical" >
 
-                <Button
-                    android:id="@+id/btnLike"
-                    android:layout_weight="50"
-                    android:layout_width="170dp"
-                    android:layout_height="30dp"
-                    android:background="@drawable/popup_btn_like"
-                    android:layout_marginLeft="5dp"    
-                    android:layout_marginBottom="5dp"                
-                    android:clickable="true"
+                <TextView
+                    android:id="@+id/TextView01"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="20dp"
+                    android:text="Image title 01"
+                    android:textColor="@android:color/black"
+                    android:textSize="17dp"
                     android:textStyle="bold" />
 
-                <Button
-                    android:id="@+id/btnBuy"                    
-                    android:layout_width="170dp"
-                    android:layout_weight="50"
-                    android:layout_height="30dp"
-                    android:layout_marginLeft="10dp"                    
-                    android:layout_marginRight="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:background="@drawable/popup_btn_buy"
+                <TextView
+                    android:id="@+id/txtDesignerID"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="2dp"
+                    android:textColor="@color/text_color"
+                    android:text="Designer"
+                    android:textSize="15dp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:id="@+id/wrapRTBlayout"
                     android:clickable="true"
+				    android:layout_width="wrap_content"
+		    		android:layout_height="wrap_content">
+    		
+                <RatingBar
+                    android:id="@+id/rtbProductRating"
+                    style="@style/foodRatingBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:isIndicator="true"
+                    android:layout_marginLeft="18dp"
+                    android:layout_marginTop="5dp"
+                    android:numStars="5"
+                    android:rating="3.5" />
+                
+                </LinearLayout>
+                    
+
+                <TextView
+                    android:id="@+id/txt_dia"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="3dp"
+                    android:text="Free"
+                    android:textColor="@android:color/black"
+                    android:textSize="15dp"
                     android:textStyle="bold" />
             </LinearLayout>
 
+            <View
+                style="@style/itempackage"
+                android:layout_marginBottom="5dp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="100" >
+
+                <Button
+                    android:id="@+id/btnLike"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="50"
+                    android:background="@drawable/btn_popup_like_selector"
+                    android:clickable="true"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btnBuy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_weight="50"
+                    android:background="@drawable/btn_popup_buy_selector"
+                    android:clickable="true"
+                    android:textStyle="bold" />
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -131,8 +144,8 @@
 
         <android.support.v4.view.ViewPager
             android:id="@+id/pager1"            
-            android:layout_width="fill_parent"
-            android:layout_height="159dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:scrollbars="none"
             android:layout_weight="0.96"
             android:background="@drawable/popup_gray_bg" >

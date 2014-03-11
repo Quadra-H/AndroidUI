@@ -2,6 +2,6 @@
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_selected="true"
-        android:drawable="@drawable/perm_group_camera_selected"></item>
-    <item android:drawable="@drawable/perm_group_camera_normal"></item>
+        android:drawable="@drawable/ic_action_new_picture_selected"></item>
+    <item android:drawable="@drawable/ic_action_new_picture"></item>
 </selector>

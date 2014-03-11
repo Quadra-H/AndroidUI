@@ -65,7 +65,7 @@ public class EditTool extends Activity {
 			// TODO Auto-generated method stub			
 			View dialog = View.inflate(getApplicationContext(), R.layout.edittool_dialog, null);  
             final AlertDialog ad = new AlertDialog.Builder(EditTool.this).setView(dialog).create();  
-            editTitle = (EditText) dialog.findViewById(R.id.Title);
+            editTitle = (EditText) dialog.findViewById(R.id.input_path);
             editTitle.setSingleLine();
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.showSoftInput(editTitle, InputMethodManager.SHOW_FORCED);

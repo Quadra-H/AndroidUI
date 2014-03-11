@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<RelativeLayout android:padding="5dp" android:orientation="vertical" android:layout_height="wrap_content" android:layout_width="wrap_content" xmlns:android="http://schemas.android.com/apk/res/android">
+<RelativeLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:padding="5dp" 
+    android:orientation="vertical" 
+    android:layout_marginLeft ="10dp"
+    android:layout_marginTop = "10dp"
+    android:layout_height="wrap_content" 
+    android:layout_width="wrap_content" 
+  
+    >
 
 <Button 
     android:layout_height="20dp" 
@@ -15,10 +24,11 @@
 	android:id="@+id/btnX"/>
 
 <ImageView 
-    android:layout_height="50dp" 
-    android:layout_width="50dp" 
+    android:layout_height="75dp" 
+    android:layout_width="75dp" 
     android:id="@+id/grid_new_item_image" 
-    android:src="@drawable/register_add_btn" 
+    android:src="@drawable/register_add_btn"
+    
     android:focusable="false"
     android:layout_centerHorizontal="true" 
     android:layout_below="@+id/btnX"/>

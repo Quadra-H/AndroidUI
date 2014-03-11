@@ -15,7 +15,7 @@
             android:layout_width="88dp"
             android:layout_height="68dp"
             android:layout_margin="10dp"
-            android:src="@drawable/list_rectangle" />
+            android:src="@drawable/register_add_btn" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -26,10 +26,10 @@
                 android:id="@+id/textViewTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="Image title 01"
+                android:layout_marginTop="13dp"
+                android:hint="제목을 입력하려면 클릭하세요."
                 android:textColor="#040404"
-                android:textSize="15dip"
+                android:textSize="10dip"
                 android:textStyle="bold"
                 android:typeface="sans" />
 
@@ -52,8 +52,7 @@
                 android:focusable="false"
                 android:focusableInTouchMode="false"
                 android:isIndicator="true"
-                android:numStars="5"
-                android:rating="3.5" />
+                android:numStars="5" />
 
             <TextView
                 android:id="@+id/textViewCost"

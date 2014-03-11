@@ -68,7 +68,7 @@ public class DetailItems extends EndlessAdapter {
 	@Override
 	protected boolean cacheInBackground() throws Exception {
 		// TODO Auto-generated method stub
-		SystemClock.sleep(1000);       // pretend to do work
+		SystemClock.sleep(10000);       // pretend to do work
 	    
 	    return(getWrappedAdapter().getCount()<75);
 	}

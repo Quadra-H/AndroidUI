@@ -56,9 +56,9 @@ public class MarketMenuLayout extends FragmentActivity {
 	private static final String[] CONTENT = new String[] { "Best", "New", "My", "Like" };
 	private static final int[] ICONS = new int[]{ 
 		R.drawable.perm_group_best,
-		R.drawable.perm_group_like,
-		R.drawable.perm_group_my,
 		R.drawable.perm_group_new,
+		R.drawable.perm_group_my,		
+		R.drawable.perm_group_like,
 	};
 
 	private MenuItem mSpinnerItem = null;
@@ -93,18 +93,18 @@ public class MarketMenuLayout extends FragmentActivity {
 		
 		switch(type)
 		{
-		case Constants.TYPE_LAYOUT:
-			bar.setTitle("LAYOUT");
-			break;
-		case Constants.TYPE_BACKGROUND:
-			bar.setTitle("BACKGROUND");
-			break;
-		case Constants.TYPE_STICKER:
-			bar.setTitle("STICKER");
-			break;
-		case Constants.TYPE_FRAME:
-			bar.setTitle("FRAME");
-			break;
+			case Constants.TYPE_LAYOUT:
+				bar.setTitle(" LAYOUT");
+				break;
+			case Constants.TYPE_BACKGROUND:
+				bar.setTitle(" BACKGROUND");
+				break;
+			case Constants.TYPE_STICKER:
+				bar.setTitle(" STICKER");
+				break;
+			case Constants.TYPE_FRAME:
+				bar.setTitle(" FRAME");
+				break;
 		}
 		
 		ArrayList<Items> itemList = new ArrayList<Items>();
@@ -132,8 +132,8 @@ public class MarketMenuLayout extends FragmentActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// TODO Auto-generated method stub
 		getMenuInflater().inflate(R.menu.main, menu);
-		mSpinnerItem = menu.findItem( R.id.action_tag );
-		setupSpinner( mSpinnerItem );
+//		mSpinnerItem = menu.findItem( R.id.action_tag );
+//		setupSpinner( mSpinnerItem );
 
 
 
@@ -223,6 +223,7 @@ public class MarketMenuLayout extends FragmentActivity {
 		if (view instanceof Spinner)
 		{
 			Spinner spinner = (Spinner) view;
+			
 			spinner.setAdapter( ArrayAdapter.createFromResource( this,
 					R.array.spinner_data,
 					android.R.layout.simple_spinner_dropdown_item ) );
@@ -255,19 +256,6 @@ public class MarketMenuLayout extends FragmentActivity {
 		}
 	}
 
-
-
-
-
-
-
-	
-
-
-
-
-
-	
 	class SectionsPagerAdapter extends FragmentPagerAdapter implements IconPagerAdapter {
 		private ArrayList<Items> itemList;
 		private ArrayList<BestSectionFragment> fragmentList = new ArrayList<BestSectionFragment>();
@@ -330,7 +318,7 @@ public class MarketMenuLayout extends FragmentActivity {
 		protected String[] doInBackground(Void... params) {
 			// Simulates a background job.
 			try {
-				Thread.sleep(4000);
+				Thread.sleep(10000);
 			} catch (InterruptedException e) {
 			}
 			return null;

@@ -9,8 +9,16 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff.Mode;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -31,9 +39,11 @@ public class DesignerProfileEdit extends Activity {
 	protected static final int REQ_CODE_PICK_PICTURE = 3;	
 	TextView textDesignerName;
 	TextView textDesignerSatate;
-	ImageView ProfilePicture;	
+	
 	TextView textCoverPicture;
 	ImageView imageViewCoverPicture;
+	ImageView imageViewCoverPictureCamera;
+	ImageView imageProfilePicture;	
 	
 	 private static final int PICK_FROM_CAMERA = 0;
 	 private static final int PICK_FROM_ALBUM = 1;
@@ -54,19 +64,48 @@ public class DesignerProfileEdit extends Activity {
 	    ActionBar bar = getActionBar();
 	    bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#f34022")));
 	    bar.setHomeButtonEnabled(true);
+	    bar.setTitle(" PROFILE EDIT");
+	    bar.setDisplayShowHomeEnabled(false);
+	    
+	    int actionBarTitleId = Resources.getSystem().getIdentifier("action_bar_title", "id", "android");
+		if (actionBarTitleId > 0) {
+		    TextView title = (TextView) findViewById(actionBarTitleId);
+		    if (title != null) {
+		        title.setTextColor(Color.WHITE);
+		    }
+		}
 	    
 	    retIntent = getIntent();
 	    
 	    strID = retIntent.getStringExtra("Account");
 	    
-	    ProfilePicture = (ImageView)findViewById(R.id.imageViewProfileEdit);
+	    
 	    textDesignerName = (TextView)findViewById(R.id.EditDesignerName);
 	    textDesignerSatate = (TextView)findViewById(R.id.EditDesignerState);
-	    textCoverPicture = (TextView)findViewById(R.id.textCoverPicture);
+	    
+	    imageProfilePicture = (ImageView)findViewById(R.id.imageViewProfileEdit);
+	    imageViewCoverPicture = (ImageView)findViewById(R.id.imageViewCover);
+	    imageViewCoverPictureCamera = (ImageView)findViewById(R.id.imageCoverCameraBtn);
+	    
+	    imageProfilePicture.setOnClickListener(OnClickPicture);
+	    imageViewCoverPicture.setOnClickListener(OnClickPicture);
+	    imageViewCoverPictureCamera.setOnClickListener(OnClickPicture);
+	    
+	    //textCoverPicture = (TextView)findViewById(R.id.textCoverPicture);
+	    
 	    
 	    
 	    
 	}
+	
+	View.OnClickListener OnClickPicture = new View.OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			functionPicture(v);
+		}
+	};
 	
 	@Override
 	public void onBackPressed() {
@@ -150,7 +189,7 @@ public class DesignerProfileEdit extends Activity {
 	
 	public void functionPicture(View v){
 
-			if(v.getId() == R.id.imageViewProfileEdit || v.getId() == R.id.layoutDesignerProfile)
+			if(v.getId() == R.id.imageViewProfileEdit) //profile
 			{
 				DialogInterface.OnClickListener cameraListener = new DialogInterface.OnClickListener()
 			    {
@@ -187,7 +226,7 @@ public class DesignerProfileEdit extends Activity {
 			      .show();
 			}
 
-		if(v.getId() == R.id.layoutCoverPicture || v.getId() == R.id.relativeCover){
+		if(v.getId() == R.id.imageViewCover || v.getId() == R.id.imageCoverCameraBtn){  //cover
 			DialogInterface.OnClickListener cameraCoverListener = new DialogInterface.OnClickListener()
 		    {
 		      @Override
@@ -232,6 +271,28 @@ public class DesignerProfileEdit extends Activity {
 		
 	}
 	
+	public static Bitmap getRoundedCornerBitmap(Bitmap bitmap) {
+	    Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
+	        bitmap.getHeight(), Config.ARGB_8888);
+	    Canvas canvas = new Canvas(output);
+	 
+	    final int color = 0xff424242;
+	    final Paint paint = new Paint();
+	    final Rect rect = new Rect(0, 0, bitmap.getWidth()-1, bitmap.getHeight()-1);
+	    final RectF rectF = new RectF(rect);
+	    final float roundPx = 20;
+	 
+	    paint.setAntiAlias(true);
+	    canvas.drawARGB(0, 0, 0, 0);
+	    paint.setColor(color);
+	    canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+	 
+	    paint.setXfermode(new PorterDuffXfermode(Mode.SRC_IN));
+	    canvas.drawBitmap(bitmap, rect, rect, paint);
+	 
+	    return output;
+	  }
+	
 
 	@SuppressWarnings("deprecation")
 	@Override
@@ -248,8 +309,8 @@ public class DesignerProfileEdit extends Activity {
 
 		        if(extras != null)
 		        {
-		          Bitmap photo = extras.getParcelable("data");
-		          ProfilePicture.setImageBitmap(photo);
+		          Bitmap photo = extras.getParcelable("data");		          
+		          imageProfilePicture.setImageBitmap(getRoundedCornerBitmap(photo));
 		        }
 
 		        // 임시 파일 삭제
@@ -298,7 +359,7 @@ public class DesignerProfileEdit extends Activity {
 					// TODO Auto-generated catch block e.printStackTrace();
 				}
 				
-				imageViewCoverPicture = (ImageView)findViewById(R.id.imageViewCover);
+				
 				BitmapDrawable ob = new BitmapDrawable(selPhoto);
 				imageViewCoverPicture.setBackgroundDrawable(ob);
 								//imageViewCoverPicture.setBackgroundResource(R.drawable.collage);

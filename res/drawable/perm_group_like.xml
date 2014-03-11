@@ -2,6 +2,6 @@
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_selected="true"
-        android:drawable="@drawable/perm_group_location_selected"></item>
-    <item android:drawable="@drawable/perm_group_location_normal"></item>
+        android:drawable="@drawable/ic_action_favorite_selected"></item>
+    <item android:drawable="@drawable/ic_action_favorite"></item>    
 </selector>

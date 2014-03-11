@@ -40,26 +40,34 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.util.SparseBooleanArray;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.ssm.quadrah.diymarket.Constants;
 import com.ssm.quadrah.diymarket.DesignerAccount;
 import com.ssm.quadrah.diymarket.R;
 import com.ssm.quadrah.diymarket.content.circle.CirclePageIndicator;
 import com.ssm.quadrah.diymarket.content.tab.PageIndicator;
+import com.ssm.quadrah.diymarket.designeditor.DesignEditorTool;
 import com.ssm.quadrah.diymarket.profile.DesignerProfileName;
 
 public class MarketRegister extends FragmentActivity {
+	
+	private static final int IMAGE_DPI_1280_800 = 0;
+	private static final int IMAGE_DPI_1920_1200 = 1;
+	private static final int IMAGE_DPI_1280_720 = 2;
+	private static final int IMAGE_DPI_1920_1080 = 3;
 
 	protected NewGridAdapter mAdapter;
 	
@@ -70,8 +78,17 @@ public class MarketRegister extends FragmentActivity {
     private TextView txtWorkTitle;
     private TextView txtWorkCost;
     private TextView txtDesingerID;
-    private ImageView imageView;
-    private Button btnRegister;
+    
+    
+    private ImageView representiveImageView;
+    private String saveFilePathPNG;
+    private String saveFilePathSPD;
+    private String title;
+    private int dpi_width;
+    private int dpi_height;
+    
+    
+    private EditText editTitle;
   
     //private ArrayList<NewGridItems> newGridItems;
     private LinkedList<NewGridItems> newGridItems;
@@ -80,6 +97,7 @@ public class MarketRegister extends FragmentActivity {
     private MenuItem mSpinnerItem = null;
     
     int type = 0;
+    public static String strType = null;
     
     ArrayList<String> a;
     Iterator<String> it;
@@ -112,15 +130,19 @@ public class MarketRegister extends FragmentActivity {
 		{
 		case Constants.TYPE_LAYOUT:
 			bar.setTitle("LAYOUT");
+			strType = "1_";
 			break;
 		case Constants.TYPE_BACKGROUND:
 			bar.setTitle("BACKGROUND");
+			strType = "2_";
 			break;
 		case Constants.TYPE_STICKER:
 			bar.setTitle("STICKER");
+			strType = "3_";
 			break;
 		case Constants.TYPE_FRAME:
 			bar.setTitle("FRAME");
+			strType = "4_";
 			break;
 		}
 	    
@@ -129,8 +151,8 @@ public class MarketRegister extends FragmentActivity {
 	    txtDesingerID.setText(((DesignerAccount)getApplication()).getAccount());
 	    txtWorkTitle.setOnClickListener(OnClickTitle);
 	    
-        imageView = (ImageView)findViewById(R.id.imageViewProfile);
-        imageView.setOnClickListener(OnClickImage);
+	    representiveImageView = (ImageView)findViewById(R.id.imageViewProfile);
+	    representiveImageView.setOnClickListener(OnClickImage);
         
         mPager = (ViewPager)findViewById(R.id.pager2);        
         mIndicator = (CirclePageIndicator)findViewById(R.id.pagerIndicator1);
@@ -139,6 +161,7 @@ public class MarketRegister extends FragmentActivity {
         
         NewGridItems basicItem = new NewGridItems(0, "registerBasic");    
         newGridItems.add(basicItem);
+        newGridItems.get(0).strType = strType;
         
         gridFragments = new ArrayList<NewGridFragment>();        
         gridFragments.add(new NewGridFragment(newGridItems, MarketRegister.this, gridFragments));
@@ -162,68 +185,78 @@ public class MarketRegister extends FragmentActivity {
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// TODO Auto-generated method stub
-
-		switch(item.getItemId()){
-		case R.id.action_register_edit :
-			final CharSequence[] items = {"Love","Winter","Animal"};
-            // arraylist to keep the selected items
-            final ArrayList seletedItems=new ArrayList();
-           
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("태그를 선택하세요.");
-            builder.setMultiChoiceItems(items, null,
-                    new DialogInterface.OnMultiChoiceClickListener() {
-           
-             @Override
-             public void onClick(DialogInterface dialog, int indexSelected,
-                     boolean isChecked) {
-                 if (isChecked) {
-                     seletedItems.add(indexSelected);
-                 } else if (seletedItems.contains(indexSelected)) {
-           
-                     seletedItems.remove(Integer.valueOf(indexSelected));
-                 }
-             }
-         })
-         .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-             @Override
-             public void onClick(DialogInterface dialog, int id) {
-            	 SparseBooleanArray CheCked = ((AlertDialog)dialog).getListView().getCheckedItemPositions();
-            	 if(CheCked.get(0) == true){
-            		 Toast.makeText(MarketRegister.this, "Love", Toast.LENGTH_SHORT).show();
-            	 }
-            	 if(CheCked.get(1) == true){
-            		 Toast.makeText(MarketRegister.this, "Winter", Toast.LENGTH_SHORT).show();
-            	 }
-            	 if(CheCked.get(2) == true){
-            		 Toast.makeText(MarketRegister.this, "Animal", Toast.LENGTH_SHORT).show();
-            	 }
-            	 finish();
-                
-             }
-         })
-         .setNegativeButton("취소", new DialogInterface.OnClickListener() {
-             @Override
-             public void onClick(DialogInterface dialog, int id) {
-                dialog.dismiss();
-             }
-         });
-   
-            dialog = builder.create();
-            dialog.show();
-			break;		
-
-		case android.R.id.home:
+		if(item.getItemId() == R.id.action_register_edit)
+		{
+			//서버에 전송할 부분
 			finish();
-		default:
-			break;
-
 		}
 		return super.onOptionsItemSelected(item);
 	}
 	
-	EditText editTitle;
+//	@Override
+//	public boolean onOptionsItemSelected(MenuItem item) {
+//		// TODO Auto-generated method stub
+//
+//		switch(item.getItemId()){
+//		case R.id.action_register_edit :
+//			final CharSequence[] items = {"Love","Winter","Animal"};
+//            // arraylist to keep the selected items
+//            final ArrayList seletedItems=new ArrayList();
+//           
+//            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//            builder.setTitle("태그를 선택하세요.");
+//            builder.setMultiChoiceItems(items, null,
+//                    new DialogInterface.OnMultiChoiceClickListener() {
+//           
+//             @Override
+//             public void onClick(DialogInterface dialog, int indexSelected,
+//                     boolean isChecked) {
+//                 if (isChecked) {
+//                     seletedItems.add(indexSelected);
+//                 } else if (seletedItems.contains(indexSelected)) {
+//           
+//                     seletedItems.remove(Integer.valueOf(indexSelected));
+//                 }
+//             }
+//         })
+//         .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+//             @Override
+//             public void onClick(DialogInterface dialog, int id) {
+//            	 SparseBooleanArray CheCked = ((AlertDialog)dialog).getListView().getCheckedItemPositions();
+//            	 if(CheCked.get(0) == true){
+//            		 Toast.makeText(MarketRegister.this, "Love", Toast.LENGTH_SHORT).show();
+//            	 }
+//            	 if(CheCked.get(1) == true){
+//            		 Toast.makeText(MarketRegister.this, "Winter", Toast.LENGTH_SHORT).show();
+//            	 }
+//            	 if(CheCked.get(2) == true){
+//            		 Toast.makeText(MarketRegister.this, "Animal", Toast.LENGTH_SHORT).show();
+//            	 }
+//            	 finish();
+//                
+//             }
+//         })
+//         .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+//             @Override
+//             public void onClick(DialogInterface dialog, int id) {
+//                dialog.dismiss();
+//             }
+//         });
+//   
+//            dialog = builder.create();
+//            dialog.show();
+//			break;		
+//
+//		case android.R.id.home:
+//			finish();
+//		default:
+//			break;
+//
+//		}
+//		return super.onOptionsItemSelected(item);
+//	}
+	
+	
 	
 	View.OnClickListener OnClickTitle = new View.OnClickListener() {
 		
@@ -231,8 +264,10 @@ public class MarketRegister extends FragmentActivity {
 		public void onClick(View v) {
 			// TODO Auto-generated method stub
 			View dialog = View.inflate(getApplicationContext(), R.layout.edittool_dialog, null);  
-            final AlertDialog ad = new AlertDialog.Builder(MarketRegister.this).setView(dialog).create();  
-            editTitle = (EditText) dialog.findViewById(R.id.Title);
+            final AlertDialog ad = new AlertDialog.Builder(MarketRegister.this).setView(dialog).create();
+            
+            
+            editTitle = (EditText) dialog.findViewById(R.id.input_path);
             editTitle.setSingleLine();
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.showSoftInput(txtWorkTitle, InputMethodManager.SHOW_FORCED);
@@ -490,6 +525,8 @@ public class MarketRegister extends FragmentActivity {
 		}
 	}
 	BitmapDrawable bitmapDrawable;
+	
+	DialogInterface mPopupDlg = null;
 
 	int position = 0;;
 	View.OnClickListener OnClickImage = new View.OnClickListener() {
@@ -498,8 +535,93 @@ public class MarketRegister extends FragmentActivity {
 		public void onClick(View arg0) {
 			// TODO Auto-generated method stub
 			
-			Intent i = new Intent(MarketRegister.this, EditTool.class);
-			startActivityForResult(i, 30);
+			
+			if(saveFilePathSPD != null)
+			{		
+				Intent i = new Intent(MarketRegister.this, DesignEditorTool.class);
+				
+				i.putExtra("title", title);
+        		i.putExtra("dpi_width", dpi_width);
+        	    i.putExtra("dpi_height", dpi_height);
+        	    i.putExtra("SPD", saveFilePathSPD);
+        	    
+        	    startActivityForResult(i, 30);
+			}
+			
+			else
+			{
+				Intent i = new Intent(MarketRegister.this, DesignEditorTool.class);
+				
+				String dpi[] ={"1280*800","1920*1200","1280*720","1920*1080"};
+		        AlertDialog.Builder alertDialog = new AlertDialog.Builder(MarketRegister.this);
+		        LayoutInflater inflater = getLayoutInflater();
+		        View convertView = (View) inflater.inflate(R.layout.dialog_work_list, null);
+		        alertDialog.setView(convertView);		        
+		        ListView lv = (ListView) convertView.findViewById(R.id.listview_profile);
+		        
+		        ArrayAdapter<String> adapter = new ArrayAdapter<String>(MarketRegister.this,android.R.layout.simple_list_item_1, dpi);
+		        lv.setAdapter(adapter);
+		        
+		                
+		        DialogInterface.OnClickListener cancelListener = new DialogInterface.OnClickListener()
+			    {
+			      @Override
+			      public void onClick(DialogInterface dialog, int which)
+			      {
+			        dialog.dismiss();
+			      }
+			    };
+			    
+			    lv.setOnItemClickListener(new OnItemClickListener(){
+		        	@Override
+					public void onItemClick(AdapterView<?> parent, View view,
+							int position, long id) {
+		        		
+		        		Intent i = new Intent(MarketRegister.this, DesignEditorTool.class);	
+		        		switch(position)
+		        		{
+		        		case IMAGE_DPI_1280_800:	
+		        			dpi_width = 1280;
+		        			dpi_height = 800;
+		        			break;
+		        		case IMAGE_DPI_1920_1200:
+		        			dpi_width = 1920;
+		        			dpi_height = 1200;   		
+		        			break;
+		        		case IMAGE_DPI_1280_720:
+		        			dpi_width = 1280;
+		        			dpi_height = 720;     				        			
+		        			break;
+		        		case IMAGE_DPI_1920_1080:
+		        			dpi_width = 1920;
+		        			dpi_height = 1080;	
+		        			break;
+		        		}
+		        		
+		        		
+		        		
+		        		i.putExtra("dpi_width", dpi_width);
+		        	    i.putExtra("dpi_height", dpi_height);
+		        	    
+			        	
+			        	saveFilePathPNG += strType.toString();
+			        	
+			        	startActivityForResult(i, 30);
+		        		mPopupDlg.dismiss();
+		        	}
+		        });
+		        
+		        mPopupDlg = alertDialog.setTitle("해상도를 선택하세요.").setNegativeButton("취소", cancelListener).show();
+				
+				 
+			}
+			
+			  
+			
+			
+			
+			
+			
 		}
 	};
 	
@@ -522,8 +644,22 @@ public class MarketRegister extends FragmentActivity {
 			}
 			else if(requestCode == 30)
 			{				
-				Bitmap thumbnail = (Bitmap) data.getExtras().get("img");				
-				imageView.setImageBitmap(thumbnail);
+				saveFilePathPNG = data.getStringExtra("PNG");
+				saveFilePathSPD = data.getStringExtra("SPD");				
+				title = data.getStringExtra("title");
+				dpi_width = data.getIntExtra("dpi_width", 0);
+				dpi_height = data.getIntExtra("dpi_height", 0);
+				
+				
+				
+				File imgFile = new  File(saveFilePathPNG);
+				Bitmap myBitmap = null;
+				if(imgFile.exists()){
+
+				    myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+				}
+								
+				representiveImageView.setImageBitmap(myBitmap);
 			}
 			
 		}

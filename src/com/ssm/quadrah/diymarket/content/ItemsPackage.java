@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -16,11 +17,14 @@ import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.RatingBar;
+import android.widget.RatingBar.OnRatingBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ssm.quadrah.diymarket.DesignerAccount;
 import com.ssm.quadrah.diymarket.R;
 import com.ssm.quadrah.diymarket.content.circle.BaseSampleActivity;
 import com.ssm.quadrah.diymarket.content.circle.CirclePageIndicator;
@@ -35,7 +39,25 @@ public class ItemsPackage extends BaseSampleActivity {
 	static public PagerAdapter pm;
 	
 	private TextView txtDesignerID;
-
+	
+	private RatingBar ratingBar;
+	private float ratingBarValue;
+	
+	 Button btnExit;
+	 Button btnLike;
+	 Button btnBuy;
+	
+	public float getRatingBarValue()
+	{
+		return this.ratingBarValue;
+	}
+	
+	public void setRatingBarValue(float value)
+	{
+		this.ratingBarValue = value;
+		ratingBar.setRating(ratingBarValue);
+		ratingBar.refreshDrawableState();
+	}
 	 
 	
 	@Override
@@ -54,7 +76,9 @@ public class ItemsPackage extends BaseSampleActivity {
 			
 			}
 	};
-	 
+	
+	private static String strID;
+	private String strCompare;
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -62,16 +86,62 @@ public class ItemsPackage extends BaseSampleActivity {
 	    setContentView(R.layout.activity_itempackage);
 	    // TODO Auto-generated method stub
 	    
-	    Button btnExit = (Button)findViewById(R.id.btnExit);
-	    Button btnLike = (Button)findViewById(R.id.btnLike);
-	    Button btnBuy = (Button)findViewById(R.id.btnBuy);
+	    btnExit = (Button)findViewById(R.id.btnExit);
+	    btnLike = (Button)findViewById(R.id.btnLike);
+	    btnBuy = (Button)findViewById(R.id.btnBuy);
 	    txtDesignerID = (TextView)findViewById(R.id.txtDesignerID);
-	    txtDesignerID.setTextColor(Color.RED);
+	    //txtDesignerID.setTextColor(Color.RED);
 	    SpannableString content = new SpannableString("DesignerID"); 
 	    content.setSpan(new UnderlineSpan(), 0, content.length(), 0); 
 	    
+	    LinearLayout wrapRTBlayout = (LinearLayout)findViewById(R.id.wrapRTBlayout);
+	    wrapRTBlayout.setOnClickListener(OnClickRatingBar);
+	    
+	    ratingBar = (RatingBar)findViewById(R.id.rtbProductRating);	
+	    ratingBar.setOnClickListener(OnClickRatingBar);
+	    ratingBar.setClickable(true);
+	    ratingBar.setStepSize((float) 0.5); 
+	    ratingBar.setEnabled(true);
+	    ratingBar.setRating(0);
+	    
+	    
+	    
+//	    ratingBar.setOnRatingBarChangeListener(new OnRatingBarChangeListener() {
+//	    	 
+//            @Override
+//            public void onRatingChanged(RatingBar ratingBar, float rating,
+//                    boolean fromUser) {
+//            	
+//            	ratingBar.setRating(rating);
+//            	ratingBarValue = rating;
+//            	Toast.makeText(ItemsPackage.this, String.valueOf("감사합니다." + ratingBar.getRating()), Toast.LENGTH_SHORT).show();                   
+// 
+//            }
+//        });
+//
+//	    
+	    
+	    Bundle getUserID = getIntent().getExtras();	    
+	    
+	    if(getUserID != null){
+	    	strID = getIntent().getStringExtra("Account");
+	    }
+	    
 	    txtDesignerID.setText(content);
 	    txtDesignerID.setOnClickListener(OnClickDesignerID);
+	    
+	    strCompare = txtDesignerID.getText().toString();
+	    Log.d("ID", strCompare + " : " + strID);
+	    if(strID != null){
+		    if(strCompare.toString().equals(strID.toString()))
+		    {
+		    	txtDesignerID.setClickable(false);
+		    	txtDesignerID.setFocusable(false);
+		    	txtDesignerID.setTextColor(Color.BLACK);
+		    }
+	    }
+
+	    
 
 	    
 	    btnLike.setOnClickListener(OnClickLike);
@@ -185,14 +255,54 @@ public class ItemsPackage extends BaseSampleActivity {
         
         
 	}
+	RatingBar tmpRating;
+	static float tmpRatingBarValue;
+	
+	View.OnClickListener OnClickRatingBar = new View.OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			
+			View dialog = View.inflate(getApplicationContext(), R.layout.ratingbar_dialog, null);  
+            final AlertDialog ad = new AlertDialog.Builder(ItemsPackage.this).setView(dialog).create();
+            tmpRating = (RatingBar)dialog.findViewById(R.id.rtbSet);
+            
+            tmpRating.setOnRatingBarChangeListener(new OnRatingBarChangeListener() {
+   	    	 
+               @Override
+               public void onRatingChanged(RatingBar ratingBar, float rating,
+                       boolean fromUser) {
+               	
+            	tmpRating.setRating(rating);
+            	setRatingBarValue(rating);
+               	
+               	                   
+    
+               }
+           });
+            
+            dialog.findViewById(R.id.completeButton).setOnClickListener(new OnClickListener() {  
+                
+                @Override  
+                public void onClick(View v) {
+                	
+                	ad.dismiss();
+                      
+                      
+                }  
+            });  
+            
+            ad.show(); 
+		}
+	};
 	
 	View.OnClickListener OnClickDesignerID = new View.OnClickListener() {
 		
 		@Override
 		public void onClick(View v) {
 			// TODO Auto-generated method stub
-			Intent i = new Intent(ItemsPackage.this, DesignerProfile.class);
-			TextView txtDesignerID = (TextView)v.findViewById(R.id.txtDesignerID);			
+					    
+			Intent i = new Intent(ItemsPackage.this, DesignerProfile.class);					
 			i.putExtra("Account", txtDesignerID.getText().toString());
 			startActivity(i);
 			
@@ -205,6 +315,7 @@ public class ItemsPackage extends BaseSampleActivity {
 		public void onClick(View v) {
 			// TODO Auto-generated method stub
 			Toast.makeText(ItemsPackage.this, "Like", Toast.LENGTH_LONG).show();
+			btnBuy.setPressed(false);
 			finish();
 		}
 	};
@@ -215,6 +326,7 @@ public class ItemsPackage extends BaseSampleActivity {
 		public void onClick(View v) {
 			// TODO Auto-generated method stub
 			Toast.makeText(ItemsPackage.this, "Buy", Toast.LENGTH_LONG).show();
+			btnBuy.setPressed(false);
 			finish();
 		}
 	};

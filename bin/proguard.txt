@@ -1,79 +1,74 @@
-# view res/layout/activity_itempackage.xml #generated:132
+# view res/layout/activity_itempackage.xml #generated:145
 # view res/layout/activity_marketlayout.xml #generated:35
-# view res/layout/activity_register.xml #generated:95
+# view res/layout/activity_register.xml #generated:94
 -keep class android.support.v4.view.ViewPager { <init>(...); }
 
-# view AndroidManifest.xml #generated:73
+# view AndroidManifest.xml #generated:78
 -keep class com.google.android.gcm.GCMBroadcastReceiver { <init>(...); }
 
 # view res/layout/fragment_best.xml #generated:7
 # view res/layout/layout_listview_in_viewpager.xml #generated:2
 -keep class com.handmark.pulltorefresh.library.PullToRefreshListView { <init>(...); }
 
-# view AndroidManifest.xml #generated:25
+# view AndroidManifest.xml #generated:26
 -keep class com.ssm.quadrah.diymarket.DesignerAccount { <init>(...); }
 
-# view AndroidManifest.xml #generated:71
+# view AndroidManifest.xml #generated:76
 -keep class com.ssm.quadrah.diymarket.GCMIntentService { <init>(...); }
 
-# view AndroidManifest.xml #generated:31
+# view AndroidManifest.xml #generated:32
 -keep class com.ssm.quadrah.diymarket.MainActivity { <init>(...); }
 
-# view AndroidManifest.xml #generated:39
+# view AndroidManifest.xml #generated:40
 -keep class com.ssm.quadrah.diymarket.MarketMenu { <init>(...); }
 
-# view AndroidManifest.xml #generated:88
+# view AndroidManifest.xml #generated:93
 -keep class com.ssm.quadrah.diymarket.RegisterActivity { <init>(...); }
 
-# view AndroidManifest.xml #generated:56
+# view AndroidManifest.xml #generated:58
 -keep class com.ssm.quadrah.diymarket.content.ImageActivity { <init>(...); }
 
-# view AndroidManifest.xml #generated:53
+# view AndroidManifest.xml #generated:55
 -keep class com.ssm.quadrah.diymarket.content.ItemsPackage { <init>(...); }
 
-# view AndroidManifest.xml #generated:44
+# view AndroidManifest.xml #generated:45
 -keep class com.ssm.quadrah.diymarket.content.MarketMenuLayout { <init>(...); }
 
-# view res/layout/activity_itempackage.xml #generated:142
-# view res/layout/activity_register.xml #generated:102
+# view res/layout/activity_itempackage.xml #generated:155
+# view res/layout/activity_register.xml #generated:101
 -keep class com.ssm.quadrah.diymarket.content.circle.CirclePageIndicator { <init>(...); }
 
 # view res/layout/activity_marketlayout.xml #generated:27
 -keep class com.ssm.quadrah.diymarket.content.tab.TabPageIndicator { <init>(...); }
 
-# view AndroidManifest.xml #generated:51
+# view AndroidManifest.xml #generated:96
+-keep class com.ssm.quadrah.diymarket.designeditor.DesignEditorTool { <init>(...); }
+
+# view AndroidManifest.xml #generated:52
 -keep class com.ssm.quadrah.diymarket.profile.DesignerProfile { <init>(...); }
 
-# view AndroidManifest.xml #generated:61
+# view AndroidManifest.xml #generated:63
 -keep class com.ssm.quadrah.diymarket.profile.DesignerProfileEdit { <init>(...); }
 
-# view AndroidManifest.xml #generated:63
+# view AndroidManifest.xml #generated:66
 -keep class com.ssm.quadrah.diymarket.profile.DesignerProfileName { <init>(...); }
 
-# view AndroidManifest.xml #generated:66
+# view AndroidManifest.xml #generated:69
 -keep class com.ssm.quadrah.diymarket.profile.DesignerProfileState { <init>(...); }
 
 # view res/layout/activity_profile.xml #generated:38
 # view res/layout/activity_profile.xml #generated:54
 -keep class com.ssm.quadrah.diymarket.profile.ScrollingTextView { <init>(...); }
 
-# view AndroidManifest.xml #generated:69
+# view AndroidManifest.xml #generated:72
 -keep class com.ssm.quadrah.diymarket.register.EditTool { <init>(...); }
 
 # view AndroidManifest.xml #generated:48
 -keep class com.ssm.quadrah.diymarket.register.MarketRegister { <init>(...); }
 
-# onClick res/layout/activity_profile_edit.xml #generated:113
--keepclassmembers class * { *** functionCoverPicture(...); }
-
-# onClick res/layout/activity_profile_edit.xml #generated:10
-# onClick res/layout/activity_profile_edit.xml #generated:50
+# onClick res/layout/activity_profile_edit.xml #generated:85
 -keepclassmembers class * { *** functionName(...); }
 
-# onClick res/layout/activity_profile_edit.xml #generated:25
-# onClick res/layout/activity_profile_edit.xml #generated:95
--keepclassmembers class * { *** functionPicture(...); }
-
-# onClick res/layout/activity_profile_edit.xml #generated:65
+# onClick res/layout/activity_profile_edit.xml #generated:114
 -keepclassmembers class * { *** functionState(...); }
 

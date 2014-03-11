@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_rating_root"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_gravity="center_horizontal"
+    android:background="@drawable/save_file_dialog_bg"
+    android:orientation="vertical" >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"       
+        android:padding="10dp"     
+        android:text="작품 평가하기" />
+    
+    <RelativeLayout 
+        android:layout_width="fill_parent"  
+        android:layout_height="wrap_content" 
+        android:orientation="vertical">
+
+        <RatingBar
+            android:id="@+id/rtbSet"
+            style="@style/foodRatingBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="10dp"
+            android:numStars="5" />
+    
+    </RelativeLayout>
+
+    <View 
+        style="@style/itempackage"
+        android:layout_marginTop="15dp" />
+
+    <Button
+        android:id="@+id/completeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="10dp"
+        android:background="@drawable/btn_done" />
+  
+</LinearLayout> 
